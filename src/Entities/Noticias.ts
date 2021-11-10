@@ -18,9 +18,9 @@ export class Noticias {
     @Property()
     date: Date;
 
-    @Enum({ default: SentimentalEnum.Neutro })
-    analise: SentimentalEnum;
+    @Enum()
+    analise: SentimentalEnum.Neutro;
 
-    @OneToOne(() => Empresa, empresa => empresa.id)
-    empresaId: IdentifiedReference<Empresa>;
+    @OneToOne(() => Empresa)
+    empresa: IdentifiedReference<Empresa>;
 }

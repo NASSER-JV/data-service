@@ -14,7 +14,7 @@ export class Juncoes {
     @Property()
     dataFim!: Date;
 
-    @OneToOne(() => Empresa, empresa => empresa.id)
-    empresaId: IdentifiedReference<Empresa>;
+    @OneToOne(() => Empresa)
+    empresa: IdentifiedReference<Empresa>;
 
 }
