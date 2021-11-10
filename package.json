@@ -1,7 +1,7 @@
 {
-  "name": "datass",
+  "name": "data-service",
   "version": "0.0.1",
-  "description": "",
+  "description": "Serviço que faz conexão com o banco de dados e manipula os dados",
   "author": "",
   "private": true,
   "license": "UNLICENSED",
