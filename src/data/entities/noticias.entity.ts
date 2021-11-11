@@ -1,6 +1,6 @@
 import { Entity, Enum, IdentifiedReference, OneToOne, PrimaryKey, Property } from '@mikro-orm/core';
-import { SentimentalEnum } from '@/data/enums/sentimental.enum.js';
-import { EmpresaEntity } from './empresa.entity.js';
+import { SentimentalEnum } from '@/data/enums/sentimental.enum';
+import { EmpresaEntity } from '@/data/entities/empresa.entity';
 
 @Entity()
 export class NoticiasEntity {

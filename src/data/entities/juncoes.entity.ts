@@ -1,5 +1,5 @@
 import { Entity, IdentifiedReference, OneToOne, PrimaryKey, Property } from '@mikro-orm/core';
-import { EmpresaEntity } from '@/data/entities/empresa.entity.js';
+import { EmpresaEntity } from '@/data/entities/empresa.entity';
 
 @Entity()
 export class JuncoesEntity {
