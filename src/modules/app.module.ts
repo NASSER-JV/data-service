@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
-import { InternalController } from '../controllers/internal.controller.js';
 import {TerminusModule} from "@nestjs/terminus";
 import {HttpModule} from "@nestjs/axios";
+import {InternalController} from "@/controllers/internal.controller.js";
 
 @Module({
   imports: [TerminusModule, HttpModule],
