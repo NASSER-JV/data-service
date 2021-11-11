@@ -2,8 +2,8 @@ import { IDatabaseDriver, Options } from '@mikro-orm/core';
 
 const dbConfig: Options<IDatabaseDriver> = {
   baseDir: __dirname,
-  entities: ['./dist/src/entities'],
-  entitiesTs: ['./src/entities'],
+  entities: ['../../dist/entities'],
+  entitiesTs: ['../entities'],
   dbName: process.env.DB_NAME,
   type: 'postgresql',
   password: process.env.DB_PASS,
@@ -14,7 +14,7 @@ const dbConfig: Options<IDatabaseDriver> = {
   migrations: {
     tableName: 'migrations',
     dropTables: true,
-    path: './src/infrastructure/data/migrations',
+    path: '../infrastructure/data/migrations',
     pattern: /^[\w-]+.(js|ts)$/,
     transactional: true,
     allOrNothing: true,
