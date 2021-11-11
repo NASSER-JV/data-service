@@ -2,8 +2,8 @@ import { IDatabaseDriver, Options } from '@mikro-orm/core';
 
 const config: Options<IDatabaseDriver> = {
     baseDir: __dirname,
-    entities: ['./dist/Entities'],
-    entitiesTs: ['./src/Entities'],
+    entities: ['./dist/src/entities'],
+    entitiesTs: ['./src/entities'],
     dbName: process.env.DB_NAME,
     type: 'postgresql',
     password: process.env.DB_PASS,
