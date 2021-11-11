@@ -1,4 +1,4 @@
-export enum SentimentalEnum {
+export enum Sentimento {
   Positivo = 'positivo',
   Negativo = 'negativo',
   Neutro = 'neutro',

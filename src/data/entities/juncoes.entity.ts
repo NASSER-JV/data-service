@@ -1,8 +1,8 @@
 import { Entity, IdentifiedReference, OneToOne, PrimaryKey, Property } from '@mikro-orm/core';
-import { EmpresaEntity } from '@/data/entities/empresa.entity';
+import { Empresa } from '@/data/entities/empresa.entity';
 
 @Entity()
-export class JuncoesEntity {
+export class Juncoes {
   @PrimaryKey({ unique: true })
   id!: number;
 
@@ -12,6 +12,6 @@ export class JuncoesEntity {
   @Property()
   dataFim!: Date;
 
-  @OneToOne(() => EmpresaEntity)
-  empresa: IdentifiedReference<EmpresaEntity>;
+  @OneToOne(() => Empresa)
+  empresa: IdentifiedReference<Empresa>;
 }
