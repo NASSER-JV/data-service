@@ -1,0 +1,23 @@
+version: 2.1
+
+jobs:
+  lint:
+    docker:
+      - image: cimg/node:lts
+    steps:
+      - checkout
+      - run: npm install
+      - run: npm run lint
+  test:
+    docker:
+      - image: cimg/node:lts
+    steps:
+      - checkout
+      - run: npm install
+      - run: npm run test
+
+workflows:
+  lint_and_test:
+    jobs:
+      - lint
+      - test
