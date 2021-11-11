@@ -14,7 +14,7 @@ const dbConfig: Options<IDatabaseDriver> = {
   migrations: {
     tableName: 'migrations',
     dropTables: true,
-    path: '../data/migrations',
+    path: './src/data/migrations',
     pattern: /^[\w-]+.(js|ts)$/,
     transactional: true,
     allOrNothing: true,
