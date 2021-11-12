@@ -12,14 +12,20 @@ export class NoticiasController {
   }
 
   @Get('/filtrar')
-  getCompany(@Query('url') url) {
+  getNews(@Query('url') url) {
     return this.noticiasService.get(url);
   }
 
   @Post('/criar')
-  createCompany(@Req() request: Request) {
+  createNews(@Req() request: Request) {
     const body = request.body;
     return this.noticiasService.create(body);
+  }
+
+  @Post('/importar')
+  createManyNews(@Req() request: Request) {
+    const body = request.body;
+    return this.noticiasService.createMany(body);
   }
 
   @Delete('/deletar/:url')

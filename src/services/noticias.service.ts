@@ -31,6 +31,26 @@ export class NoticiasService {
     return noticia;
   }
 
+  async createMany(body): Promise<Noticias[] | string> {
+    const notices = [];
+    for (const b of body) {
+      const empresa = await this.em.findOne(Empresa, { nome: b.empresa, ativo: true });
+      const noticiaInDatabase = await this.em.findOne(Noticias, { url: b.url });
+      if (noticiaInDatabase === null) {
+        const noticia = this.em.create(Noticias, {
+          url: b.url,
+          empresa: empresa.id,
+          corpo: b.corpo,
+          titulo: b.titulo,
+          date: new Date(b.date),
+        });
+        notices.push(noticia);
+      }
+    }
+    await this.em.persistAndFlush(notices);
+    return notices;
+  }
+
   async delete(url): Promise<string> {
     const noticia = await this.em.findOne(Noticias, { url });
     if (noticia === null) return 'Noticia não encontrada.';
