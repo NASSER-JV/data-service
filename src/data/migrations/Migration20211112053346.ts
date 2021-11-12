@@ -1,6 +1,6 @@
 import { Migration } from '@mikro-orm/migrations';
 
-export class Migration20211112023818 extends Migration {
+export class Migration20211112053346 extends Migration {
   async up(): Promise<void> {
     this.addSql(
       'create table "empresa" ("id" serial primary key, "nome" varchar(255) not null, "codigo" varchar(255) not null, "ativo" bool not null);',
@@ -9,13 +9,11 @@ export class Migration20211112023818 extends Migration {
     this.addSql(
       'create table "juncoes" ("id" serial primary key, "data_inicio" timestamptz(0) not null, "data_fim" timestamptz(0) not null, "empresa_id" int4 not null);',
     );
-    this.addSql('alter table "juncoes" add constraint "juncoes_empresa_id_unique" unique ("empresa_id");');
 
     this.addSql(
-      'create table "noticias" ("url" varchar(255) not null, "titulo" varchar(255) not null, "corpo" varchar(255) not null, "date" timestamptz(0) not null, "analise" int2 not null, "empresa_id" int4 not null);',
+      'create table "noticias" ("url" varchar(255) not null, "titulo" varchar(255) not null, "corpo" varchar(255) not null, "date" timestamptz(0) not null, "analise" int2 null, "empresa_id" int4 not null);',
     );
     this.addSql('alter table "noticias" add constraint "noticias_pkey" primary key ("url");');
-    this.addSql('alter table "noticias" add constraint "noticias_empresa_id_unique" unique ("empresa_id");');
 
     this.addSql(
       'create table "api_keys" ("id" serial primary key, "key" varchar(255) not null, "ativo" bool not null);',

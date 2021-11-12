@@ -4,6 +4,7 @@ import { EmpresasService } from '@/services/empresas.service';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { ConfigModule } from '@nestjs/config';
 import { Connection, IDatabaseDriver, MikroORM } from '@mikro-orm/core';
+import { Empresa } from '@/data/entities/empresa.entity';
 
 describe('EmpresaController', () => {
   let appController: EmpresasController;
@@ -29,7 +30,9 @@ describe('EmpresaController', () => {
         ativo: true,
       };
       const company = await appService.create(body);
-      expect(company.nome).toContain('Teste');
+      if (company instanceof Empresa) {
+        expect(company.nome).toContain('Teste');
+      }
     });
   });
 
