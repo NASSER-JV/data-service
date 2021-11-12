@@ -8,11 +8,13 @@ import { EmpresasController } from '@/controllers/empresas.controller';
 import { EmpresasService } from '@/services/empresas.service';
 import { AuthModule } from '@/modules/auth.module';
 import { AuthMiddleware } from '@/middleware/auth.middleware';
+import { NoticiasController } from '@/controllers/noticias.controller';
+import { NoticiasServices } from '@/services/noticias.services';
 
 @Module({
   imports: [AuthModule, ConfigModule.forRoot(), TerminusModule, HttpModule, MikroOrmModule.forRoot()],
-  controllers: [InternalController, EmpresasController],
-  providers: [EmpresasService],
+  controllers: [InternalController, EmpresasController, NoticiasController],
+  providers: [EmpresasService, NoticiasServices],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
