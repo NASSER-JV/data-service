@@ -29,26 +29,28 @@ describe('JuncaoController', () => {
   describe('Criar juncao teste', () => {
     it('Deve criar uma nova juncao', async () => {
       const bodyEmpresa = {
-        nome: 'Teste',
+        nome: 'TesteJuncao',
         codigo: 'TT',
         ativo: true,
       };
       const body = {
         dataInicio: '2021-11-12',
         dataFim: '2021-12-03',
-        empresa: 'Teste',
+        empresa: 'TesteJuncao',
       };
       const empresa = await empresaService.create(bodyEmpresa);
       const juncao = await appService.create(body);
       if (juncao instanceof Juncoes && empresa instanceof Empresa) {
-        expect(juncao.empresa.id).toContain(empresa.id);
+        const empresaIdJuncao = juncao.empresa.id.toString();
+        const empresaId = empresa.id.toString();
+        expect(empresaIdJuncao).toContain(empresaId);
       }
     });
   });
 
   describe('Listar juncoes', () => {
     it('Deve retornar lista de juncoes e verifica se possui Teste', async () => {
-      const empresa = await empresaService.get('Teste');
+      const empresa = await empresaService.get('TesteJuncao');
       const juncoes = await appController.getAll();
       let idEmpresa = 0;
       juncoes.forEach((j) => {
@@ -63,7 +65,7 @@ describe('JuncaoController', () => {
   describe('Procura juncao Teste', () => {
     it('Deve retornar juncao Teste', async () => {
       const juncoes = await appController.getAll();
-      const empresa = await empresaService.get('Teste');
+      const empresa = await empresaService.get('TesteJuncao');
       let idEmpresa = 0;
       juncoes.forEach((j) => {
         if (j.empresa.id == empresa.id) {
@@ -77,15 +79,16 @@ describe('JuncaoController', () => {
   describe('Deletar juncao teste', () => {
     it('Deve deletar uma juncao', async () => {
       const juncoes = await appController.getAll();
-      const empresa = await empresaService.get('Teste');
+      const empresa = await empresaService.get('TesteJuncao');
       let idJuncao = 0;
       juncoes.forEach((j) => {
         if (j.empresa.id == empresa.id) {
           idJuncao = j.id;
         }
       });
-      const companyDelete = await appService.delete(idJuncao);
-      expect(companyDelete).toContain(`Junção foi removida com sucesso!`);
+      const juncaoDelete = await appService.delete(idJuncao);
+      await empresaService.delete(empresa.id);
+      expect(juncaoDelete).toContain(`Junção foi removida com sucesso!`);
     });
   });
 
