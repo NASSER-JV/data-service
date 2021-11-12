@@ -16,6 +16,7 @@ export class NoticiasService {
 
   async create(body): Promise<Noticias | string> {
     const empresa = await this.em.findOne(Empresa, { nome: body.empresa, ativo: true });
+    if (empresa == null) return `Empresa não encontrada!`;
     const noticiaInDatabase = await this.em.findOne(Noticias, { url: body.url });
     if (noticiaInDatabase !== null) {
       return `A notícia ja foi cadastrada anteriormente!`;
@@ -36,7 +37,7 @@ export class NoticiasService {
     for (const b of body) {
       const empresa = await this.em.findOne(Empresa, { nome: b.empresa, ativo: true });
       const noticiaInDatabase = await this.em.findOne(Noticias, { url: b.url });
-      if (noticiaInDatabase === null) {
+      if (noticiaInDatabase === null && empresa !== null) {
         const noticia = this.em.create(Noticias, {
           url: b.url,
           empresa: empresa.id,

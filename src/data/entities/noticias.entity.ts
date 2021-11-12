@@ -1,4 +1,4 @@
-import { Entity, Enum, IdentifiedReference, ManyToMany, PrimaryKey, Property } from '@mikro-orm/core';
+import { Entity, Enum, IdentifiedReference, ManyToOne, PrimaryKey, Property } from '@mikro-orm/core';
 import { Sentimento } from '@/data/enums/sentimental.enum';
 import { Empresa } from '@/data/entities/empresa.entity';
 
@@ -19,6 +19,6 @@ export class Noticias {
   @Enum({ nullable: true })
   analise: Sentimento.Neutro;
 
-  @ManyToMany(() => Empresa)
+  @ManyToOne(() => Empresa)
   empresa: IdentifiedReference<Empresa>;
 }

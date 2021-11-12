@@ -1,4 +1,4 @@
-import { Entity, IdentifiedReference, ManyToMany, PrimaryKey, Property } from '@mikro-orm/core';
+import { Entity, IdentifiedReference, ManyToOne, PrimaryKey, Property } from '@mikro-orm/core';
 import { Empresa } from '@/data/entities/empresa.entity';
 
 @Entity()
@@ -12,6 +12,6 @@ export class Juncoes {
   @Property()
   dataFim!: Date;
 
-  @ManyToMany(() => Empresa)
+  @ManyToOne(() => Empresa)
   empresa: IdentifiedReference<Empresa>;
 }
