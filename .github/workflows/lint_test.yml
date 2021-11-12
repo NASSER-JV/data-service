@@ -1,12 +1,11 @@
-name: Lint and Test Pull Request
+name: Lint and Test PR
 
 on: pull_request
 
 jobs:
-  lint_test:
-    name: Lint and Test
+  lint:
+    name: Lint
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -19,5 +18,24 @@ jobs:
         run: npm ci
       - name: Run Lint
         run: npm run lint
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16
+          cache: 'npm'
+      - name: Install deps
+        run: npm ci
+      - name: Setup tests
+        run: |
+          cp .env.test .env
+          docker-compose -f ./.docker/docker-compose.yml up -d postgres-tcc
+          npx mikro-orm migration:up
       - name: Run Tests
         run: npm run test

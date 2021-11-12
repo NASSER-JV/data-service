@@ -1,9 +1,9 @@
 import { Migration } from '@mikro-orm/migrations';
 
-export class Migration20211112014215 extends Migration {
+export class Migration20211112023818 extends Migration {
   async up(): Promise<void> {
     this.addSql(
-      'create table "empresa" ("id" serial primary key, "nome" varchar(255) not null, "codigo" varchar(255) not null, "ativo" jsonb not null);',
+      'create table "empresa" ("id" serial primary key, "nome" varchar(255) not null, "codigo" varchar(255) not null, "ativo" bool not null);',
     );
 
     this.addSql(
@@ -16,6 +16,10 @@ export class Migration20211112014215 extends Migration {
     );
     this.addSql('alter table "noticias" add constraint "noticias_pkey" primary key ("url");');
     this.addSql('alter table "noticias" add constraint "noticias_empresa_id_unique" unique ("empresa_id");');
+
+    this.addSql(
+      'create table "api_keys" ("id" serial primary key, "key" varchar(255) not null, "ativo" bool not null);',
+    );
 
     this.addSql(
       'alter table "juncoes" add constraint "juncoes_empresa_id_foreign" foreign key ("empresa_id") references "empresa" ("id") on update cascade;',

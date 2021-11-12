@@ -3,22 +3,24 @@ import { EmpresasController } from '@/controllers/empresas.controller';
 import { EmpresasService } from '@/services/empresas.service';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { ConfigModule } from '@nestjs/config';
+import { Connection, IDatabaseDriver, MikroORM } from '@mikro-orm/core';
 
 describe('EmpresaController', () => {
   let appController: EmpresasController;
   let appService: EmpresasService;
+  let orm: MikroORM<IDatabaseDriver<Connection>>;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const app: TestingModule = await Test.createTestingModule({
       imports: [ConfigModule.forRoot(), MikroOrmModule.forRoot()],
       controllers: [EmpresasController],
       providers: [EmpresasService],
     }).compile();
 
+    orm = app.get<MikroORM>(MikroORM);
     appController = app.get<EmpresasController>(EmpresasController);
     appService = app.get<EmpresasService>(EmpresasService);
   });
-
   describe('Criar empresa teste', () => {
     it('Deve criar uma nova empresa', async () => {
       const body = {
@@ -56,4 +58,6 @@ describe('EmpresaController', () => {
       expect(companyDelete).toContain(`Empresa: ${company.nome} removida com sucesso!`);
     });
   });
+
+  afterAll(async () => await orm.close());
 });
