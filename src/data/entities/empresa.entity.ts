@@ -12,5 +12,5 @@ export class Empresa {
   codigo!: string;
 
   @Property()
-  ativo = false;
+  ativo!: boolean;
 }
