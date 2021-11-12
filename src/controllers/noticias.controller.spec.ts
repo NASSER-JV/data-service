@@ -28,13 +28,13 @@ describe('NoticiasController', () => {
   describe('Criar noticia teste', () => {
     it('Deve criar uma nova noticia', async () => {
       const bodyEmpresa = {
-        nome: 'Teste',
+        nome: 'TesteNoticia',
         codigo: 'TT',
         ativo: true,
       };
       const body = {
         url: 'teste.com',
-        empresa: 'Teste',
+        empresa: 'TesteNoticia',
         corpo: 'teste',
         titulo: 'teste',
         date: '2021-11-12',
@@ -68,6 +68,8 @@ describe('NoticiasController', () => {
   describe('Deletar noticia teste', () => {
     it('Deve deletar uma noticia', async () => {
       const newsDelete = await appService.delete('teste.com');
+      const company = await empresaService.get('TesteNoticia');
+      await empresaService.delete(company.id);
       expect(newsDelete).toContain(`Noticia foi removida com sucesso!`);
     });
   });
