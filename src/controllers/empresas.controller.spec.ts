@@ -56,6 +56,4 @@ describe('EmpresaController', () => {
       expect(companyDelete).toContain(`Empresa: ${company.nome} removida com sucesso!`);
     });
   });
-
-  afterAll(() => setTimeout(() => process.exit(), 1000));
 });
