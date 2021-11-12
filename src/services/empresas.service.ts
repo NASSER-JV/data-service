@@ -13,7 +13,11 @@ export class EmpresasService {
     return this.em.findOne(Empresa, { nome: name, ativo: true });
   }
 
-  async create(body): Promise<Empresa> {
+  async create(body): Promise<Empresa | string> {
+    const empresaInDatabase = await this.em.findOne(Empresa, { nome: body.nome, ativo: true });
+    if (empresaInDatabase !== null) {
+      return `A empresa ${empresaInDatabase.nome} ja foi cadastrada anteriormente!`;
+    }
     const empresa = this.em.create(Empresa, { nome: body.nome, codigo: body.codigo, ativo: body.ativo });
     await this.em.persistAndFlush(empresa);
     return empresa;

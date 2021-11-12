@@ -1,20 +1,20 @@
-import { Controller, Delete, Get, Param, Post, Req } from '@nestjs/common';
+import { Controller, Delete, Get, Param, Post, Query, Req } from '@nestjs/common';
 import { Request } from 'express';
-import { NoticiasServices } from '@/services/noticias.services';
+import { NoticiasService } from '@/services/noticias.service';
 
 @Controller('/noticias')
 export class NoticiasController {
-  constructor(private readonly noticiasService: NoticiasServices) {}
+  constructor(private readonly noticiasService: NoticiasService) {}
 
   @Get()
   getAll() {
     return this.noticiasService.list();
   }
 
-  // @Get()
-  // getCompany(@Query('name') name) {
-  //   return this.noticiasService.get(name);
-  // }
+  @Get('/filtrar')
+  getCompany(@Query('url') url) {
+    return this.noticiasService.get(url);
+  }
 
   @Post('/criar')
   createCompany(@Req() request: Request) {
@@ -22,8 +22,8 @@ export class NoticiasController {
     return this.noticiasService.create(body);
   }
 
-  @Delete('/deletar/:id')
-  deleteCompany(@Param('id') id: string) {
-    return this.noticiasService.delete(id);
+  @Delete('/deletar/:url')
+  deleteCompany(@Param('url') url: string) {
+    return this.noticiasService.delete(url);
   }
 }

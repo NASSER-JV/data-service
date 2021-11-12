@@ -4,15 +4,15 @@ import { Noticias } from '@/data/entities/noticias.entity';
 import { Empresa } from '@/data/entities/empresa.entity';
 
 @Injectable()
-export class NoticiasServices {
+export class NoticiasService {
   constructor(private readonly orm: MikroORM, private readonly em: EntityManager) {}
   async list(): Promise<Noticias[]> {
     return this.em.find(Noticias, {});
   }
 
-  // async get(name): Promise<Noticias> {
-  //   return this.em.findOne(Noticias, { nome: name, ativo: true });
-  // }
+  async get(url): Promise<Noticias> {
+    return this.em.findOne(Noticias, { url: url });
+  }
 
   async create(body): Promise<Noticias | string> {
     const empresa = await this.em.findOne(Empresa, { nome: body.empresa, ativo: true });
@@ -31,9 +31,10 @@ export class NoticiasServices {
     return noticia;
   }
 
-  async delete(id): Promise<string> {
-    const noticia = await this.em.findOne(Noticias, id);
+  async delete(url): Promise<string> {
+    const noticia = await this.em.findOne(Noticias, { url });
+    if (noticia === null) return 'Noticia não encontrada.';
     await this.em.removeAndFlush(noticia);
-    return `Noticia da empresa ${noticia.empresa} foi removida com sucesso!`;
+    return `Noticia foi removida com sucesso!`;
   }
 }
