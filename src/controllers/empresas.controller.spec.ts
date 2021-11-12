@@ -19,24 +19,6 @@ describe('EmpresaController', () => {
     appService = app.get<EmpresasService>(EmpresasService);
   });
 
-  describe('Listar empresas', () => {
-    it('Deve retornar lista de empresas e verifica se possui Apple', async () => {
-      const company = await appController.getAll();
-      let name = '';
-      company.forEach((S) => {
-        if (S.nome == 'Apple') name = S.nome;
-      });
-      expect(name).toContain('Apple');
-    });
-  });
-
-  describe('Procura empresa Apple', () => {
-    it('Deve retornar empresa Apple', async () => {
-      const company = await appController.getCompany('Apple');
-      expect(company.nome).toContain('Apple');
-    });
-  });
-
   describe('Criar empresa teste', () => {
     it('Deve criar uma nova empresa', async () => {
       const body = {
@@ -45,6 +27,24 @@ describe('EmpresaController', () => {
         ativo: true,
       };
       const company = await appService.create(body);
+      expect(company.nome).toContain('Teste');
+    });
+  });
+
+  describe('Listar empresas', () => {
+    it('Deve retornar lista de empresas e verifica se possui Teste', async () => {
+      const company = await appController.getAll();
+      let name = '';
+      company.forEach((S) => {
+        if (S.nome == 'Teste') name = S.nome;
+      });
+      expect(name).toContain('Teste');
+    });
+  });
+
+  describe('Procura empresa Teste', () => {
+    it('Deve retornar empresa Teste', async () => {
+      const company = await appController.getCompany('Teste');
       expect(company.nome).toContain('Teste');
     });
   });
