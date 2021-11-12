@@ -2,3 +2,6 @@
 /dist/
 
 .env
+
+# PostgreSQL data from docker-compose
+/.docker/data
