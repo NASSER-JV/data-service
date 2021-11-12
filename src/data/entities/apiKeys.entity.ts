@@ -7,4 +7,7 @@ export class ApiKeys {
 
   @Property()
   key!: string;
+
+  @Property()
+  ativo!: boolean;
 }
