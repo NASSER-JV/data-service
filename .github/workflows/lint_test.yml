@@ -22,7 +22,7 @@ jobs:
       - name: Setup tests
         run: |
           cp .env.test .env
-          docker-compose up -d postgres-tcc
+          docker-compose -f ./.docker/docker-compose.yml up -d postgres-tcc
           npx mikro-orm migration:up
       - name: Run Tests
         run: npm run test
