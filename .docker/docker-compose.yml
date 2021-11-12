@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  postgres-tcc:
+    container_name: postgres-tcc
+    image: postgres:13.4
+    ports:
+      - '5444:5432'
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=tcc_news_analysis
+    extra_hosts:
+      - "host.docker.internal:172.17.0.1"
+    networks:
+      - data-service-network
+    volumes:
+      - $PWD/data/postgres:/var/lib/postgresql/data
+
+  data-service:
+    container_name: data-service
+    build:
+      context: ../
+      dockerfile: ./.docker/Dockerfile
+    ports:
+      - '3000:8080'
+    depends_on:
+      - postgres-tcc
+    networks:
+      - data-service-network
+
+networks:
+  data-service-network:
+    driver: bridge
