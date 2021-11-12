@@ -1,4 +1,4 @@
-name: Lint and Test Pull Request
+name: Lint and Test PR
 
 on: pull_request
 
