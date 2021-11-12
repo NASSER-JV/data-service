@@ -6,11 +6,11 @@ import { Empresa } from '@/data/entities/empresa.entity';
 export class EmpresasService {
   constructor(private readonly orm: MikroORM, private readonly em: EntityManager) {}
   async list(): Promise<Empresa[]> {
-    return this.em.find(Empresa, {});
+    return this.em.find(Empresa, { ativo: true });
   }
 
   async get(name): Promise<Empresa> {
-    return this.em.findOne(Empresa, { nome: name });
+    return this.em.findOne(Empresa, { nome: name, ativo: true });
   }
 
   async create(body): Promise<Empresa> {
