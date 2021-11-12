@@ -1,11 +1,11 @@
 import { Controller, Get } from '@nestjs/common';
 import { HealthCheck, HealthCheckService, HttpHealthIndicator } from '@nestjs/terminus';
 
-@Controller()
+@Controller('internal')
 export class InternalController {
   constructor(private readonly health: HealthCheckService, private readonly http: HttpHealthIndicator) {}
 
-  @Get()
+  @Get('health')
   @HealthCheck()
   healthCheck() {
     const healthIndicators = [async () => this.http.pingCheck('google.com', 'https://google.com')];
