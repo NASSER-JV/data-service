@@ -12,7 +12,7 @@ export class JuncoesController {
   }
 
   @Get('/filtrar')
-  getNews(@Query('id') id) {
+  getJuncao(@Query('id') id) {
     return this.juncoesService.get(id);
   }
 
