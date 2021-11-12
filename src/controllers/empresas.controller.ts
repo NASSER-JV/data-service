@@ -18,7 +18,8 @@ export class EmpresasController {
 
   @Post('/criar')
   createCompany(@Req() request: Request) {
-    return this.empresaService.create(request);
+    const body = request.body;
+    return this.empresaService.create(body);
   }
 
   @Delete('/deletar/:id')

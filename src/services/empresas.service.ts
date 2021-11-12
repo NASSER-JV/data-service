@@ -13,8 +13,7 @@ export class EmpresasService {
     return this.em.findOne(Empresa, { nome: name });
   }
 
-  async create(req): Promise<Empresa> {
-    const { body } = req;
+  async create(body): Promise<Empresa> {
     const empresa = this.em.create(Empresa, { nome: body.nome, codigo: body.codigo, ativo: body.ativo });
     await this.em.persistAndFlush(empresa);
     return empresa;
