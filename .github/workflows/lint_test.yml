@@ -19,5 +19,10 @@ jobs:
         run: npm ci
       - name: Run Lint
         run: npm run lint
+      - name: Setup tests
+        run: |
+          cp .env.test .env
+          docker-compose up -d postgres-tcc
+          npx mikro-orm migration:up
       - name: Run Tests
         run: npm run test
