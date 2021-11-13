@@ -68,7 +68,7 @@ describe('NoticiasController', () => {
   describe('Deletar noticia teste', () => {
     it('Deve deletar uma noticia', async () => {
       const newsDelete = await appService.delete('teste.com');
-      const company = await empresaService.get('TesteNoticia');
+      const company = await empresaService.get('TT');
       await empresaService.delete(company.id);
       expect(newsDelete).toContain(`Noticia foi removida com sucesso!`);
     });

@@ -12,8 +12,8 @@ export class EmpresasController {
   }
 
   @Get('/filtrar')
-  getCompany(@Query('name') name) {
-    return this.empresaService.get(name);
+  getCompany(@Query('sigla') sigla) {
+    return this.empresaService.get(sigla);
   }
 
   @Post('/criar')

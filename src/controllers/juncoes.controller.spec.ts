@@ -50,7 +50,7 @@ describe('JuncaoController', () => {
 
   describe('Listar juncoes', () => {
     it('Deve retornar lista de juncoes e verifica se possui Teste', async () => {
-      const empresa = await empresaService.get('TesteJuncao');
+      const empresa = await empresaService.get('TT');
       const juncoes = await appController.getAll();
       let idEmpresa = 0;
       juncoes.forEach((j) => {
@@ -65,7 +65,7 @@ describe('JuncaoController', () => {
   describe('Procura juncao Teste', () => {
     it('Deve retornar juncao Teste', async () => {
       const juncoes = await appController.getAll();
-      const empresa = await empresaService.get('TesteJuncao');
+      const empresa = await empresaService.get('TT');
       let idEmpresa = 0;
       juncoes.forEach((j) => {
         if (j.empresa.id == empresa.id) {
@@ -79,7 +79,7 @@ describe('JuncaoController', () => {
   describe('Deletar juncao teste', () => {
     it('Deve deletar uma juncao', async () => {
       const juncoes = await appController.getAll();
-      const empresa = await empresaService.get('TesteJuncao');
+      const empresa = await empresaService.get('TT');
       let idJuncao = 0;
       juncoes.forEach((j) => {
         if (j.empresa.id == empresa.id) {
