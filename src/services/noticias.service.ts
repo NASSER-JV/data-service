@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { EntityManager, MikroORM } from '@mikro-orm/core';
 import { Noticias } from '@/data/entities/noticias.entity';
-import { Empresa } from '@/data/entities/empresa.entity';
 
 @Injectable()
 export class NoticiasService {
@@ -15,19 +14,20 @@ export class NoticiasService {
   }
 
   async create(body): Promise<Noticias | string> {
-    const empresa = await this.em.findOne(Empresa, { nome: body.empresa, ativo: true });
-    if (empresa == null) return `Empresa não encontrada!`;
     const noticiaInDatabase = await this.em.findOne(Noticias, { url: body.url });
     if (noticiaInDatabase !== null) {
       return `A notícia ja foi cadastrada anteriormente!`;
     }
-    const noticia = this.em.create(Noticias, {
-      url: body.url,
-      empresa: empresa.id,
-      corpo: body.corpo,
-      titulo: body.titulo,
-      date: new Date(body.date),
-    });
+    const noticia = new Noticias();
+    noticia.url = body.url;
+    noticia.corpo = body.corpo;
+    noticia.titulo = body.titulo;
+    noticia.empresa = body.empresa_id;
+    noticia.date = new Date(body.date);
+    if (body.analise !== undefined) {
+      noticia.analise = body.analise;
+    }
+    this.em.create(Noticias, noticia);
     await this.em.persistAndFlush(noticia);
     return noticia;
   }
@@ -35,16 +35,18 @@ export class NoticiasService {
   async createMany(body): Promise<Noticias[] | string> {
     const notices = [];
     for (const b of body) {
-      const empresa = await this.em.findOne(Empresa, { nome: b.empresa, ativo: true });
       const noticiaInDatabase = await this.em.findOne(Noticias, { url: b.url });
-      if (noticiaInDatabase === null && empresa !== null) {
-        const noticia = this.em.create(Noticias, {
-          url: b.url,
-          empresa: empresa.id,
-          corpo: b.corpo,
-          titulo: b.titulo,
-          date: new Date(b.date),
-        });
+      if (noticiaInDatabase === null) {
+        const noticia = new Noticias();
+        noticia.url = b.url;
+        noticia.empresa = b.empresa_id;
+        noticia.corpo = b.corpo;
+        noticia.titulo = b.titulo;
+        noticia.date = new Date(b.date);
+        if (b.analise !== undefined) {
+          noticia.analise = b.analise;
+        }
+        this.em.create(Noticias, noticia);
         notices.push(noticia);
       }
     }

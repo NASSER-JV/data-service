@@ -6,6 +6,7 @@ import { NoticiasController } from '@/controllers/noticias.controller';
 import { NoticiasService } from '@/services/noticias.service';
 import { EmpresasService } from '@/services/empresas.service';
 import { Noticias } from '@/data/entities/noticias.entity';
+import { Empresa } from '@/data/entities/empresa.entity';
 
 describe('NoticiasController', () => {
   let appController: NoticiasController;
@@ -27,20 +28,28 @@ describe('NoticiasController', () => {
   });
   describe('Criar noticia teste', () => {
     it('Deve criar uma nova noticia', async () => {
-      const bodyEmpresa = {
-        nome: 'TesteNoticia',
-        codigo: 'TT',
-        ativo: true,
-      };
-      const body = {
-        url: 'teste.com',
-        empresa: 'TesteNoticia',
-        corpo: 'teste',
-        titulo: 'teste',
-        date: '2021-11-12',
-      };
-      await empresaService.create(bodyEmpresa);
-      const news = await appService.create(body);
+      let news: Noticias | string = '';
+
+      let empresa: Empresa | string = await empresaService.get('TT', true);
+      if (empresa == null) {
+        const bodyEmpresa = {
+          nome: 'TesteNoticia',
+          codigo: 'TT',
+          ativo: true,
+        };
+        empresa = await empresaService.create(bodyEmpresa);
+      }
+      if (empresa instanceof Empresa) {
+        const body = {
+          url: 'teste.com',
+          empresa_id: `${empresa.id}`,
+          corpo: 'teste',
+          titulo: 'teste',
+          date: '2021-11-12',
+        };
+        news = await appService.create(body);
+      }
+
       if (news instanceof Noticias) {
         expect(news.url).toContain('teste.com');
       }
