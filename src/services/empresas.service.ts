@@ -9,8 +9,8 @@ export class EmpresasService {
     return this.em.find(Empresa, { ativo: true });
   }
 
-  async get(name): Promise<Empresa> {
-    return this.em.findOne(Empresa, { nome: name, ativo: true });
+  async get(sigla, ativo): Promise<Empresa> {
+    return this.em.findOne(Empresa, { codigo: sigla, ativo: ativo });
   }
 
   async create(body): Promise<Empresa | string> {
