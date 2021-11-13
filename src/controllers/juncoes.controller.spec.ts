@@ -28,18 +28,24 @@ describe('JuncaoController', () => {
   });
   describe('Criar juncao teste', () => {
     it('Deve criar uma nova juncao', async () => {
-      const bodyEmpresa = {
-        nome: 'TesteJuncao',
-        codigo: 'TT',
-        ativo: true,
-      };
-      const body = {
-        dataInicio: '2021-11-12',
-        dataFim: '2021-12-03',
-        empresa: 'TesteJuncao',
-      };
-      const empresa = await empresaService.create(bodyEmpresa);
-      const juncao = await appService.create(body);
+      let empresa: Empresa | string = await empresaService.get('TT', true);
+      let juncao: Juncoes | string;
+      if (empresa == null) {
+        const bodyEmpresa = {
+          nome: 'TesteJuncao',
+          codigo: 'TT',
+          ativo: true,
+        };
+        empresa = await empresaService.create(bodyEmpresa);
+      }
+      if (empresa instanceof Empresa) {
+        const body = {
+          dataInicio: '2021-11-12',
+          dataFim: '2021-12-03',
+          empresa_id: `${empresa.id}`,
+        };
+        juncao = await appService.create(body);
+      }
       if (juncao instanceof Juncoes && empresa instanceof Empresa) {
         const empresaIdJuncao = juncao.empresa.id.toString();
         const empresaId = empresa.id.toString();

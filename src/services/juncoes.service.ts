@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { EntityManager, MikroORM } from '@mikro-orm/core';
-import { Empresa } from '@/data/entities/empresa.entity';
 import { Juncoes } from '@/data/entities/juncoes.entity';
 
 @Injectable()
@@ -15,7 +14,6 @@ export class JuncoesService {
   }
 
   async create(body): Promise<Juncoes | string> {
-    const empresa = await this.em.findOne(Empresa, { nome: body.empresa });
     if (body.juncaoId !== undefined) {
       const juncaoInDatabase = await this.em.findOne(Juncoes, { id: body.juncaoId });
       if (juncaoInDatabase !== null) {
@@ -25,7 +23,7 @@ export class JuncoesService {
     const juncao = await this.em.create(Juncoes, {
       dataInicio: new Date(body.dataInicio),
       dataFim: new Date(body.dataFim),
-      empresa: empresa.id,
+      empresa: body.empresa_id,
     });
     await this.em.persistAndFlush(juncao);
     return juncao;
