@@ -49,14 +49,16 @@ describe('EmpresaController', () => {
 
   describe('Procura empresa Teste', () => {
     it('Deve retornar empresa Teste', async () => {
-      const company = await appController.getCompany('TT');
+      const params = { sigla: 'TT', ativo: true };
+      const company = await appController.getCompany(params);
       expect(company.nome).toContain('Teste');
     });
   });
 
   describe('Deletar empresa teste', () => {
     it('Deve deletar uma empresa', async () => {
-      const company = await appController.getCompany('TT');
+      const params = { sigla: 'TT', ativo: true };
+      const company = await appController.getCompany(params);
       const companyDelete = await appService.delete(company.id);
       expect(companyDelete).toContain(`Empresa: ${company.nome} removida com sucesso!`);
     });
