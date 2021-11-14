@@ -4,13 +4,13 @@ import { Empresa } from '@/data/entities/empresa.entity';
 
 @Entity()
 export class Noticias {
-  @PrimaryKey({ unique: true })
+  @PrimaryKey({ unique: true, type: 'text' })
   url!: string;
 
-  @Property()
+  @Property({ type: 'text' })
   titulo!: string;
 
-  @Property()
+  @Property({ type: 'text' })
   corpo!: string;
 
   @Property()
