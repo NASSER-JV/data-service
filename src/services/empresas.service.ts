@@ -14,7 +14,7 @@ export class EmpresasService {
   }
 
   async create(body): Promise<Empresa | string> {
-    const empresaInDatabase = await this.em.findOne(Empresa, { nome: body.nome, ativo: true });
+    const empresaInDatabase = await this.em.findOne(Empresa, { codigo: body.codigo, ativo: true });
     if (empresaInDatabase !== null) {
       return `A empresa ${empresaInDatabase.nome} ja foi cadastrada anteriormente!`;
     }
