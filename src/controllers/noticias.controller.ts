@@ -1,4 +1,4 @@
-import { Controller, Delete, Get, Param, Post, Query, Req } from '@nestjs/common';
+import { Controller, Delete, Get, Param, Patch, Post, Query, Req } from '@nestjs/common';
 import { Request } from 'express';
 import { NoticiasService } from '@/services/noticias.service';
 
@@ -26,6 +26,13 @@ export class NoticiasController {
   createManyNews(@Req() request: Request) {
     const body = request.body;
     return this.noticiasService.createMany(body);
+  }
+
+  @Patch('/:id')
+  updateNews(@Req() request: Request) {
+    const body = request.body;
+    const url = request.params.url;
+    return this.noticiasService.update(url, body);
   }
 
   @Delete('/deletar/:url')

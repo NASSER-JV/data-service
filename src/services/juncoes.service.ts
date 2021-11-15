@@ -29,6 +29,17 @@ export class JuncoesService {
     return juncao;
   }
 
+  async update(id, body): Promise<string> {
+    const updateJuncoes: Juncoes = {
+      id,
+      dataFim: new Date(body.dataFim),
+      dataInicio: new Date(body.dataInicio),
+      empresa: body.empresa_id,
+    };
+    await this.em.nativeUpdate(Juncoes, id, updateJuncoes);
+    return `Junção ${updateJuncoes.id} atualizada com sucesso!`;
+  }
+
   async delete(id): Promise<string> {
     const juncao = await this.em.findOne(Juncoes, { id });
     if (juncao === null) return 'Junção não encontrada.';

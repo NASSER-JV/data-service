@@ -54,6 +54,17 @@ export class NoticiasService {
     return notices;
   }
 
+  async update(url, body): Promise<string> {
+    const noticia = new Noticias();
+    noticia.url = body.url;
+    noticia.empresa = body.empresa_id;
+    noticia.corpo = body.corpo;
+    noticia.titulo = body.titulo;
+    noticia.date = new Date(body.date);
+    await this.em.nativeUpdate(Noticias, url, noticia);
+    return `Noticia ${noticia.url} atualizada com sucesso!`;
+  }
+
   async delete(url): Promise<string> {
     const noticia = await this.em.findOne(Noticias, { url });
     if (noticia === null) return 'Noticia não encontrada.';
