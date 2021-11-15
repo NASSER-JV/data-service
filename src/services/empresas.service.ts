@@ -23,6 +23,17 @@ export class EmpresasService {
     return empresa;
   }
 
+  async update(id, body): Promise<string> {
+    const updateEmpresa: Empresa = {
+      id,
+      nome: body.nome,
+      codigo: body.codigo,
+      ativo: body.ativo,
+    };
+    await this.em.nativeUpdate(Empresa, id, updateEmpresa);
+    return `${updateEmpresa.nome} atualizada com sucesso!`;
+  }
+
   async delete(id): Promise<string> {
     const empresa = await this.em.findOne(Empresa, id);
     await this.em.removeAndFlush(empresa);

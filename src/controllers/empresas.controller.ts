@@ -1,4 +1,4 @@
-import { Controller, Delete, Get, Param, Post, Query, Req } from '@nestjs/common';
+import { Controller, Delete, Get, Param, Patch, Post, Query, Req } from '@nestjs/common';
 import { EmpresasService } from '@/services/empresas.service';
 import { Request } from 'express';
 
@@ -22,6 +22,13 @@ export class EmpresasController {
   createCompany(@Req() request: Request) {
     const body = request.body;
     return this.empresaService.create(body);
+  }
+
+  @Patch('/:id')
+  updateCompany(@Req() request: Request) {
+    const body = request.body;
+    const id = request.params.id;
+    return this.empresaService.update(id, body);
   }
 
   @Delete('/deletar/:id')
