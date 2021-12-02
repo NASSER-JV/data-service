@@ -45,6 +45,7 @@ describe('NoticiasController', () => {
           empresa_id: `${empresa.id}`,
           corpo: 'teste',
           titulo: 'teste',
+          sentimento: 1,
           date: '2021-11-12',
         };
         news = await appService.create(body);

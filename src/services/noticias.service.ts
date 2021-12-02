@@ -24,9 +24,8 @@ export class NoticiasService {
     noticia.titulo = body.titulo;
     noticia.empresa = body.empresa_id;
     noticia.date = new Date(body.date);
-    if (body.analise !== undefined) {
-      noticia.analise = body.analise;
-    }
+    noticia.sentimento = body.sentimento;
+
     this.em.create(Noticias, noticia);
     await this.em.persistAndFlush(noticia);
     return noticia;
@@ -43,9 +42,8 @@ export class NoticiasService {
         noticia.corpo = b.corpo;
         noticia.titulo = b.titulo;
         noticia.date = new Date(b.date);
-        if (b.analise !== undefined) {
-          noticia.analise = b.analise;
-        }
+        noticia.sentimento = b.sentimento;
+
         this.em.create(Noticias, noticia);
         notices.push(noticia);
       }

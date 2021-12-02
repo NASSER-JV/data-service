@@ -1,4 +1,4 @@
-import { Entity, Enum, PrimaryKey, Property } from '@mikro-orm/core';
+import { Entity, PrimaryKey, Property } from '@mikro-orm/core';
 
 @Entity()
 export class NoticiasAnalise {
@@ -11,9 +11,9 @@ export class NoticiasAnalise {
   @Property({ type: 'text' })
   texto!: string;
 
-  @Enum({ nullable: true })
-  sentimento: bigint;
+  @Property({ type: 'number' })
+  sentimento!: bigint;
 
   @Property()
-  ticker: string;
+  ticker!: string;
 }

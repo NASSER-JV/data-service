@@ -44,6 +44,7 @@ describe('NoticiasAnaliseController', () => {
           url: 'teste.com',
           texto: 'teste',
           titulo: 'teste',
+          sentimento: 1,
           ticker: ['TT'],
         };
         news = await appService.create(body);
