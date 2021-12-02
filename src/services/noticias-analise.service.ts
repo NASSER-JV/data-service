@@ -10,7 +10,7 @@ export class NoticiasAnaliseService {
   }
 
   async get(codigo): Promise<NoticiasAnalise[]> {
-    return this.em.find(NoticiasAnalise, { ticker: { $in: codigo } });
+    return this.em.find(NoticiasAnalise, { ticker: codigo });
   }
 
   async create(body): Promise<NoticiasAnalise | string> {
@@ -20,9 +20,9 @@ export class NoticiasAnaliseService {
       noticia.url = body.url;
       noticia.texto = body.texto;
       noticia.titulo = body.titulo;
-      for(const t of body.ticker){
-        if(t !== undefined){
-          if(body.ticker.length > 1) {
+      for (const t of body.ticker) {
+        if (t !== undefined) {
+          if (body.ticker.length > 1) {
             noticia.ticker += `${t}, `;
           } else {
             noticia.ticker += `${t}`;
@@ -48,9 +48,9 @@ export class NoticiasAnaliseService {
         noticia.url = b.url;
         noticia.texto = b.texto;
         noticia.titulo = b.titulo;
-        for(const t of b.ticker){
-          if(t !== undefined){
-            if(b.ticker.length > 1) {
+        for (const t of b.ticker) {
+          if (t !== undefined) {
+            if (b.ticker.length > 1) {
               noticia.ticker += `${t}, `;
             } else {
               noticia.ticker += `${t}`;
