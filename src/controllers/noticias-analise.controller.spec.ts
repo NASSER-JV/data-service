@@ -6,7 +6,7 @@ import { EmpresasService } from '@/services/empresas.service';
 import { Empresa } from '@/data/entities/empresa.entity';
 import { NoticiasAnaliseController } from '@/controllers/noticias-analise.controller';
 import { NoticiasAnaliseService } from '@/services/noticias-analise.service';
-import { NoticiasAnalise } from '@/data/entities/noticias_analise.entity';
+import { NoticiasAnalise } from '@/data/entities/noticias-analise.entity';
 
 describe('NoticiasAnaliseController', () => {
   let appController: NoticiasAnaliseController;

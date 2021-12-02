@@ -1,4 +1,4 @@
-import { Controller, Delete, Get, Param, Post, Query, Req } from '@nestjs/common';
+import { Controller, Delete, Get, Post, Query, Req } from '@nestjs/common';
 import { Request } from 'express';
 import { NoticiasAnaliseService } from '@/services/noticias-analise.service';
 
@@ -28,8 +28,8 @@ export class NoticiasAnaliseController {
     return this.noticiasAnaliseService.createMany(body);
   }
 
-  @Delete('/deletar/:url')
-  deleteCompany(@Param('url') url: string) {
+  @Delete('/deletar')
+  deleteCompany(@Query('url') url: string) {
     return this.noticiasAnaliseService.delete(url);
   }
 }

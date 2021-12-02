@@ -15,8 +15,8 @@ export class Noticias {
   @Property()
   date: Date;
 
-  @Property({ type: 'number' })
-  sentimento!: bigint;
+  @Property()
+  sentimento!: number;
 
   @ManyToOne(() => Empresa)
   empresa: IdentifiedReference<Empresa>;

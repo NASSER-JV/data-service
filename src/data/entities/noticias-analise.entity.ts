@@ -11,8 +11,8 @@ export class NoticiasAnalise {
   @Property({ type: 'text' })
   texto!: string;
 
-  @Property({ type: 'number' })
-  sentimento!: bigint;
+  @Property()
+  sentimento!: number;
 
   @Property()
   ticker!: string;

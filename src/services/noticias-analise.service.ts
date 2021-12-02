@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { EntityManager, MikroORM } from '@mikro-orm/core';
-import { NoticiasAnalise } from '@/data/entities/noticias_analise.entity';
+import { NoticiasAnalise } from '@/data/entities/noticias-analise.entity';
 
 @Injectable()
 export class NoticiasAnaliseService {
