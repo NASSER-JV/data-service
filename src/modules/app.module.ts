@@ -12,11 +12,13 @@ import { NoticiasController } from '@/controllers/noticias.controller';
 import { NoticiasService } from '@/services/noticias.service';
 import { JuncoesService } from '@/services/juncoes.service';
 import { JuncoesController } from '@/controllers/juncoes.controller';
+import { NoticiasAnaliseService } from '@/services/noticias_analise.service';
+import { Noticias_analiseController } from '@/controllers/noticias_analise.controller';
 
 @Module({
   imports: [AuthModule, ConfigModule.forRoot(), TerminusModule, HttpModule, MikroOrmModule.forRoot()],
-  controllers: [InternalController, EmpresasController, NoticiasController, JuncoesController],
-  providers: [EmpresasService, NoticiasService, JuncoesService],
+  controllers: [InternalController, EmpresasController, NoticiasController, JuncoesController, Noticias_analiseController],
+  providers: [EmpresasService, NoticiasService, JuncoesService, NoticiasAnaliseService],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
