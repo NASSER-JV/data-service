@@ -1,6 +1,7 @@
-import { Controller, Delete, Get, Param, Patch, Post, Query, Req } from '@nestjs/common';
+import { Controller, Delete, Get, HttpException, HttpStatus, Patch, Post, Query, Req } from '@nestjs/common';
 import { Request } from 'express';
 import { NoticiasService } from '@/services/noticias.service';
+import { Noticias } from '@/data/entities/noticias.entity';
 
 @Controller('/noticias')
 export class NoticiasController {
@@ -16,13 +17,18 @@ export class NoticiasController {
     return this.noticiasService.get(url);
   }
 
-  @Post('/criar')
+  @Post()
   createNews(@Req() request: Request) {
     const body = request.body;
-    return this.noticiasService.create(body);
+    const noticia = this.noticiasService.create(body);
+    if (noticia instanceof Noticias) {
+      return noticia;
+    } else {
+      throw new HttpException('Noticia já cadastrada no banco de dados.', HttpStatus.BAD_REQUEST);
+    }
   }
 
-  @Post('/importar')
+  @Post('/lote')
   createManyNews(@Req() request: Request) {
     const body = request.body;
     return this.noticiasService.createMany(body);
@@ -35,8 +41,13 @@ export class NoticiasController {
     return this.noticiasService.update(url, body);
   }
 
-  @Delete('/deletar/:url')
-  deleteCompany(@Param('url') url: string) {
-    return this.noticiasService.delete(url);
+  @Delete()
+  deleteCompany(@Query('url') url: string) {
+    const deletedNews = this.noticiasService.delete(url);
+    if (deletedNews instanceof String) {
+      return deletedNews;
+    } else {
+      throw new HttpException('Noticia não foi encontrada no banco de dados.', HttpStatus.BAD_REQUEST);
+    }
   }
 }

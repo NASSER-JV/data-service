@@ -36,6 +36,11 @@ export class NoticiasAnaliseController {
 
   @Delete()
   deleteCompany(@Query('url') url: string) {
-    return this.noticiasAnaliseService.delete(url);
+    const deletedNews = this.noticiasAnaliseService.delete(url);
+    if (deletedNews instanceof String) {
+      return deletedNews;
+    } else {
+      throw new HttpException('Noticia não foi encontrada no banco de dados.', HttpStatus.BAD_REQUEST);
+    }
   }
 }

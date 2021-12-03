@@ -14,39 +14,22 @@ export class NoticiasService {
   }
 
   async create(body): Promise<Noticias | string> {
-    const noticiaInDatabase = await this.em.findOne(Noticias, { url: body.url });
-    if (noticiaInDatabase !== null) {
-      return `A notícia ja foi cadastrada anteriormente!`;
+    try {
+      const noticia = this.processDataNews(body);
+      await this.em.persistAndFlush(noticia);
+      return noticia;
+    } catch {
+      return 'Noticia já existe na base de dados!';
     }
-    const noticia = new Noticias();
-    noticia.url = body.url;
-    noticia.corpo = body.corpo;
-    noticia.titulo = body.titulo;
-    noticia.empresa = body.empresa_id;
-    noticia.date = new Date(body.date);
-    noticia.sentimento = body.sentimento;
-
-    this.em.create(Noticias, noticia);
-    await this.em.persistAndFlush(noticia);
-    return noticia;
   }
 
   async createMany(body): Promise<Noticias[] | string> {
     const notices = [];
     for (const b of body) {
-      const noticiaInDatabase = await this.em.findOne(Noticias, { url: b.url });
-      if (noticiaInDatabase === null) {
-        const noticia = new Noticias();
-        noticia.url = b.url;
-        noticia.empresa = b.empresa_id;
-        noticia.corpo = b.corpo;
-        noticia.titulo = b.titulo;
-        noticia.date = new Date(b.date);
-        noticia.sentimento = b.sentimento;
-
-        this.em.create(Noticias, noticia);
+      try {
+        const noticia = this.processDataNews(b);
         notices.push(noticia);
-      }
+      } catch {}
     }
     await this.em.persistAndFlush(notices);
     return notices;
@@ -64,9 +47,24 @@ export class NoticiasService {
   }
 
   async delete(url): Promise<string> {
-    const noticia = await this.em.findOne(Noticias, { url });
-    if (noticia === null) return 'Noticia não encontrada.';
-    await this.em.removeAndFlush(noticia);
-    return `Noticia foi removida com sucesso!`;
+    try {
+      const noticia = await this.em.findOne(Noticias, { url });
+      await this.em.removeAndFlush(noticia);
+    } catch {
+      return 'Noticia não foi encontrada na base de dados!';
+    }
+  }
+
+  private async processDataNews(body) {
+    const noticia = new Noticias();
+    noticia.url = body.url;
+    noticia.corpo = body.corpo;
+    noticia.titulo = body.titulo;
+    noticia.empresa = body.empresa_id;
+    noticia.date = new Date(body.date);
+    noticia.sentimento = body.sentimento;
+
+    this.em.create(Noticias, noticia);
+    return noticia;
   }
 }

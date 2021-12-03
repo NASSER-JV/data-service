@@ -36,10 +36,12 @@ export class NoticiasAnaliseService {
   }
 
   async delete(url): Promise<string> {
-    const noticia = await this.em.findOne(NoticiasAnalise, { url });
-    if (noticia === null) return 'Noticia não encontrada.';
-    await this.em.removeAndFlush(noticia);
-    return `Noticia foi removida com sucesso!`;
+    try {
+      const noticia = await this.em.findOne(NoticiasAnalise, { url });
+      await this.em.removeAndFlush(noticia);
+    } catch {
+      return 'Noticia não foi encontrada na base de dados!';
+    }
   }
 
   private async processNewsData(news) {
