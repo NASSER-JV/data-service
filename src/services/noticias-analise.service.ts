@@ -11,65 +11,21 @@ export class NoticiasAnaliseService {
   }
 
   async get(codigo): Promise<NoticiasAnalise[]> {
-    return this.em.find(NoticiasAnalise, { ticker: codigo });
+    return this.em.find(NoticiasAnalise, { tickers: codigo });
   }
 
   async create(body): Promise<NoticiasAnalise | string> {
-    const noticiaInDatabase = await this.em.findOne(NoticiasAnalise, { url: body.url });
-    if (noticiaInDatabase === null) {
-      const noticia = new NoticiasAnalise();
-      noticia.url = body.url;
-      noticia.texto = body.texto;
-      noticia.titulo = body.titulo;
-      for (const t of body.ticker) {
-        if (t !== undefined) {
-          let ticker = await this.em.findOne(Ticker, { nome: t });
-          if (!ticker) {
-            const newTicker = {
-              nome: t,
-            };
-            ticker = await this.em.create(Ticker, newTicker);
-            await this.em.persistAndFlush(ticker);
-          }
-          noticia.ticker.add(ticker);
-        }
-      }
-      noticia.sentimento = body.sentimento;
-
-      this.em.create(NoticiasAnalise, noticia);
-      await this.em.persistAndFlush(noticia);
-      return noticia;
-    }
+    const noticia = await this.processNewsData(body);
+    await this.em.persistAndFlush(noticia);
+    if (noticia !== null) return noticia;
     return 'Noticia já existe na base de dados!';
   }
 
   async createMany(body): Promise<NoticiasAnalise[] | string> {
     const notices = [];
     for (const b of body) {
-      const noticiaInDatabase = await this.em.findOne(NoticiasAnalise, { url: b.url });
-      if (noticiaInDatabase === null) {
-        const noticia = new NoticiasAnalise();
-        noticia.url = b.url;
-        noticia.texto = b.texto;
-        noticia.titulo = b.titulo;
-        for (const t of b.ticker) {
-          if (t !== undefined) {
-            let ticker = await this.em.findOne(Ticker, { nome: t });
-            if (!ticker) {
-              const newTicker = {
-                nome: t,
-              };
-              ticker = await this.em.create(Ticker, newTicker);
-              await this.em.persistAndFlush(ticker);
-            }
-            noticia.ticker.add(ticker);
-          }
-        }
-        noticia.sentimento = b.sentimento;
-
-        this.em.create(NoticiasAnalise, noticia);
-        notices.push(noticia);
-      }
+      const noticia = await this.processNewsData(b);
+      notices.push(noticia);
     }
     await this.em.persistAndFlush(notices);
     return notices;
@@ -80,5 +36,30 @@ export class NoticiasAnaliseService {
     if (noticia === null) return 'Noticia não encontrada.';
     await this.em.removeAndFlush(noticia);
     return `Noticia foi removida com sucesso!`;
+  }
+
+  private async processNewsData(b) {
+    const noticiaInDatabase = await this.em.findOne(NoticiasAnalise, { url: b.url });
+    if (noticiaInDatabase === null) {
+      const noticia = new NoticiasAnalise();
+      noticia.url = b.url;
+      noticia.texto = b.texto;
+      noticia.titulo = b.titulo;
+      for (const t of b.tickers) {
+        let ticker = await this.em.findOne(Ticker, { nome: t });
+        if (!ticker) {
+          const newTicker = {
+            nome: t,
+          };
+          ticker = await this.em.create(Ticker, newTicker);
+          await this.em.persistAndFlush(ticker);
+        }
+        noticia.tickers.add(ticker);
+      }
+      noticia.sentimento = b.sentimento;
+
+      this.em.create(NoticiasAnalise, noticia);
+      return noticia;
+    }
   }
 }

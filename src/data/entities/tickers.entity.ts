@@ -6,6 +6,6 @@ export class Ticker {
   @PrimaryKey({ unique: true })
   nome!: string;
 
-  @ManyToMany(() => NoticiasAnalise, (b) => b.ticker)
-  noticiasAnalises: Collection<NoticiasAnalise> = new Collection<NoticiasAnalise>(this);
+  @ManyToMany(() => NoticiasAnalise, (b) => b.tickers)
+  noticiasAnalise: Collection<NoticiasAnalise> = new Collection<NoticiasAnalise>(this);
 }

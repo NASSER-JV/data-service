@@ -16,5 +16,5 @@ export class NoticiasAnalise {
   sentimento!: number;
 
   @ManyToMany(() => Ticker)
-  ticker = new Collection<Ticker>(this);
+  tickers = new Collection<Ticker>(this);
 }

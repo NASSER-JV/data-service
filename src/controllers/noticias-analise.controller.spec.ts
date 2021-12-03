@@ -45,7 +45,7 @@ describe('NoticiasAnaliseController', () => {
           texto: 'teste',
           titulo: 'teste',
           sentimento: 1,
-          ticker: ['TT'],
+          tickers: ['TT'],
         };
         news = await appService.create(body);
       }
