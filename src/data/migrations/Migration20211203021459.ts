@@ -1,11 +1,21 @@
 import { Migration } from '@mikro-orm/migrations';
 
-export class Migration20211202232906 extends Migration {
+export class Migration20211203021459 extends Migration {
   async up(): Promise<void> {
+    this.addSql('create table "ticker" ("nome" varchar(255) not null);');
+    this.addSql('alter table "ticker" add constraint "ticker_pkey" primary key ("nome");');
+
     this.addSql(
-      'create table "noticias_analise" ("url" text not null, "titulo" text not null, "texto" text not null, "sentimento" int4 not null, "ticker" varchar(255) not null);',
+      'create table "noticias_analise" ("url" text not null, "titulo" text not null, "texto" text not null, "sentimento" int4 not null);',
     );
     this.addSql('alter table "noticias_analise" add constraint "noticias_analise_pkey" primary key ("url");');
+
+    this.addSql(
+      'create table "noticias_analise_ticker" ("noticias_analise_url" text not null, "ticker_nome" varchar(255) not null);',
+    );
+    this.addSql(
+      'alter table "noticias_analise_ticker" add constraint "noticias_analise_ticker_pkey" primary key ("noticias_analise_url", "ticker_nome");',
+    );
 
     this.addSql(
       'create table "empresa" ("id" serial primary key, "nome" varchar(255) not null, "codigo" varchar(255) not null, "ativo" bool not null);',
@@ -22,6 +32,13 @@ export class Migration20211202232906 extends Migration {
 
     this.addSql(
       'create table "api_keys" ("id" serial primary key, "key" varchar(255) not null, "ativo" bool not null);',
+    );
+
+    this.addSql(
+      'alter table "noticias_analise_ticker" add constraint "noticias_analise_ticker_noticias_analise_url_foreign" foreign key ("noticias_analise_url") references "noticias_analise" ("url") on update cascade on delete cascade;',
+    );
+    this.addSql(
+      'alter table "noticias_analise_ticker" add constraint "noticias_analise_ticker_ticker_nome_foreign" foreign key ("ticker_nome") references "ticker" ("nome") on update cascade on delete cascade;',
     );
 
     this.addSql(

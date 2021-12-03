@@ -1,4 +1,5 @@
-import { Entity, PrimaryKey, Property } from '@mikro-orm/core';
+import { Collection, Entity, ManyToMany, PrimaryKey, Property } from '@mikro-orm/core';
+import { Ticker } from '@/data/entities/tickers.entity';
 
 @Entity()
 export class NoticiasAnalise {
@@ -14,6 +15,6 @@ export class NoticiasAnalise {
   @Property()
   sentimento!: number;
 
-  @Property()
-  ticker!: string;
+  @ManyToMany(() => Ticker)
+  ticker = new Collection<Ticker>(this);
 }
