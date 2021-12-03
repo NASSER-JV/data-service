@@ -15,17 +15,21 @@ export class NoticiasAnaliseService {
   }
 
   async create(body): Promise<NoticiasAnalise | string> {
-    const noticia = await this.processNewsData(body);
-    await this.em.persistAndFlush(noticia);
-    if (noticia !== null) return noticia;
-    return 'Noticia já existe na base de dados!';
+    try {
+      const noticia = await this.processNewsData(body);
+      await this.em.persistAndFlush(noticia);
+    } catch {
+      return 'Noticia já existe na base de dados!';
+    }
   }
 
   async createMany(body): Promise<NoticiasAnalise[] | string> {
     const notices = [];
     for (const b of body) {
-      const noticia = await this.processNewsData(b);
-      notices.push(noticia);
+      try {
+        const noticia = await this.processNewsData(b);
+        notices.push(noticia);
+      } catch {}
     }
     await this.em.persistAndFlush(notices);
     return notices;
@@ -38,28 +42,25 @@ export class NoticiasAnaliseService {
     return `Noticia foi removida com sucesso!`;
   }
 
-  private async processNewsData(b) {
-    const noticiaInDatabase = await this.em.findOne(NoticiasAnalise, { url: b.url });
-    if (noticiaInDatabase === null) {
-      const noticia = new NoticiasAnalise();
-      noticia.url = b.url;
-      noticia.texto = b.texto;
-      noticia.titulo = b.titulo;
-      for (const t of b.tickers) {
-        let ticker = await this.em.findOne(Ticker, { nome: t });
-        if (!ticker) {
-          const newTicker = {
-            nome: t,
-          };
-          ticker = await this.em.create(Ticker, newTicker);
-          await this.em.persistAndFlush(ticker);
-        }
-        noticia.tickers.add(ticker);
+  private async processNewsData(news) {
+    const noticia = new NoticiasAnalise();
+    noticia.url = news.url;
+    noticia.texto = news.texto;
+    noticia.titulo = news.titulo;
+    for (const t of news.tickers) {
+      let ticker = await this.em.findOne(Ticker, { nome: t });
+      if (!ticker) {
+        const newTicker = {
+          nome: t,
+        };
+        ticker = await this.em.create(Ticker, newTicker);
+        await this.em.persistAndFlush(ticker);
       }
-      noticia.sentimento = b.sentimento;
-
-      this.em.create(NoticiasAnalise, noticia);
-      return noticia;
+      noticia.tickers.add(ticker);
     }
+    noticia.sentimento = news.sentimento;
+
+    this.em.create(NoticiasAnalise, noticia);
+    return noticia;
   }
 }

@@ -7,5 +7,5 @@ export class Ticker {
   nome!: string;
 
   @ManyToMany(() => NoticiasAnalise, (b) => b.tickers)
-  noticiasAnalise: Collection<NoticiasAnalise> = new Collection<NoticiasAnalise>(this);
+  noticiasAnalise = new Collection<NoticiasAnalise>(this);
 }

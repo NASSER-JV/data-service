@@ -1,6 +1,7 @@
-import { Controller, Delete, Get, Post, Query, Req } from '@nestjs/common';
+import { Controller, Delete, Get, HttpException, HttpStatus, Post, Query, Req } from '@nestjs/common';
 import { Request } from 'express';
 import { NoticiasAnaliseService } from '@/services/noticias-analise.service';
+import { NoticiasAnalise } from '@/data/entities/noticias-analise.entity';
 
 @Controller('/noticiasanalise')
 export class NoticiasAnaliseController {
@@ -16,19 +17,24 @@ export class NoticiasAnaliseController {
     return this.noticiasAnaliseService.get(ticker);
   }
 
-  @Post('/criar')
+  @Post()
   createNews(@Req() request: Request) {
     const body = request.body;
-    return this.noticiasAnaliseService.create(body);
+    const noticia = this.noticiasAnaliseService.create(body);
+    if (noticia instanceof NoticiasAnalise) {
+      return noticia;
+    } else {
+      throw new HttpException('Noticia já cadastrada no banco de dados.', HttpStatus.BAD_REQUEST);
+    }
   }
 
-  @Post('/importar')
+  @Post('/lote')
   createManyNews(@Req() request: Request) {
     const body = request.body;
     return this.noticiasAnaliseService.createMany(body);
   }
 
-  @Delete('/deletar')
+  @Delete()
   deleteCompany(@Query('url') url: string) {
     return this.noticiasAnaliseService.delete(url);
   }
