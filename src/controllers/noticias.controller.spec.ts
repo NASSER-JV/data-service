@@ -43,7 +43,7 @@ describe('NoticiasController', () => {
         const body = {
           url: 'teste.com',
           empresa_id: `${empresa.id}`,
-          corpo: 'teste',
+          texto: 'teste',
           titulo: 'teste',
           sentimento: 1,
           date: '2021-11-12',
@@ -80,7 +80,7 @@ describe('NoticiasController', () => {
       const newsDelete = await appService.delete('teste.com');
       const company = await empresaService.get('TT', true);
       await empresaService.delete(company.id);
-      expect(newsDelete).toContain(`Noticia foi removida com sucesso!`);
+      if (newsDelete instanceof Noticias) expect(newsDelete.url).toContain('teste.com');
     });
   });
 

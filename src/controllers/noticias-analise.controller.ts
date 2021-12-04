@@ -8,19 +8,19 @@ export class NoticiasAnaliseController {
   constructor(private readonly noticiasAnaliseService: NoticiasAnaliseService) {}
 
   @Get()
-  getAll() {
+  async getAll() {
     return this.noticiasAnaliseService.list();
   }
 
   @Get('/filtrar')
-  getNews(@Query('ticker') ticker) {
+  async getNews(@Query('ticker') ticker) {
     return this.noticiasAnaliseService.get(ticker);
   }
 
   @Post()
-  createNews(@Req() request: Request) {
+  async createNews(@Req() request: Request) {
     const body = request.body;
-    const noticia = this.noticiasAnaliseService.create(body);
+    const noticia = await this.noticiasAnaliseService.create(body);
     if (noticia instanceof NoticiasAnalise) {
       return noticia;
     } else {
@@ -29,14 +29,14 @@ export class NoticiasAnaliseController {
   }
 
   @Post('/lote')
-  createManyNews(@Req() request: Request) {
+  async createManyNews(@Req() request: Request) {
     const body = request.body;
     return this.noticiasAnaliseService.createMany(body);
   }
 
   @Delete()
-  deleteCompany(@Query('url') url: string) {
-    const deletedNews = this.noticiasAnaliseService.delete(url);
+  async deleteNews(@Query('url') url: string) {
+    const deletedNews = await this.noticiasAnaliseService.delete(url);
     if (deletedNews instanceof String) {
       return deletedNews;
     } else {

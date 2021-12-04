@@ -18,9 +18,9 @@ export class NoticiasController {
   }
 
   @Post()
-  createNews(@Req() request: Request) {
+  async createNews(@Req() request: Request) {
     const body = request.body;
-    const noticia = this.noticiasService.create(body);
+    const noticia = await this.noticiasService.create(body);
     if (noticia instanceof Noticias) {
       return noticia;
     } else {
@@ -29,21 +29,21 @@ export class NoticiasController {
   }
 
   @Post('/lote')
-  createManyNews(@Req() request: Request) {
+  async createManyNews(@Req() request: Request) {
     const body = request.body;
     return this.noticiasService.createMany(body);
   }
 
   @Patch('/:id')
-  updateNews(@Req() request: Request) {
+  async updateNews(@Req() request: Request) {
     const body = request.body;
     const url = request.params.url;
     return this.noticiasService.update(url, body);
   }
 
   @Delete()
-  deleteCompany(@Query('url') url: string) {
-    const deletedNews = this.noticiasService.delete(url);
+  async deleteNews(@Query('url') url: string) {
+    const deletedNews = await this.noticiasService.delete(url);
     if (deletedNews instanceof String) {
       return deletedNews;
     } else {

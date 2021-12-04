@@ -15,7 +15,7 @@ export class NoticiasService {
 
   async create(body): Promise<Noticias | string> {
     try {
-      const noticia = this.processDataNews(body);
+      const noticia = await this.processDataNews(body);
       await this.em.persistAndFlush(noticia);
       return noticia;
     } catch {
@@ -27,7 +27,7 @@ export class NoticiasService {
     const notices = [];
     for (const b of body) {
       try {
-        const noticia = this.processDataNews(b);
+        const noticia = await this.processDataNews(b);
         notices.push(noticia);
       } catch {}
     }
@@ -39,17 +39,18 @@ export class NoticiasService {
     const noticia = new Noticias();
     noticia.url = body.url;
     noticia.empresa = body.empresa_id;
-    noticia.corpo = body.corpo;
+    noticia.corpo = body.texto;
     noticia.titulo = body.titulo;
     noticia.date = new Date(body.date);
     await this.em.nativeUpdate(Noticias, url, noticia);
     return `Noticia ${noticia.url} atualizada com sucesso!`;
   }
 
-  async delete(url): Promise<string> {
+  async delete(url): Promise<Noticias | string> {
     try {
       const noticia = await this.em.findOne(Noticias, { url });
       await this.em.removeAndFlush(noticia);
+      return noticia;
     } catch {
       return 'Noticia não foi encontrada na base de dados!';
     }
@@ -58,13 +59,13 @@ export class NoticiasService {
   private async processDataNews(body) {
     const noticia = new Noticias();
     noticia.url = body.url;
-    noticia.corpo = body.corpo;
+    noticia.corpo = body.texto;
     noticia.titulo = body.titulo;
     noticia.empresa = body.empresa_id;
     noticia.date = new Date(body.date);
     noticia.sentimento = body.sentimento;
 
-    this.em.create(Noticias, noticia);
+    await this.em.create(Noticias, noticia);
     return noticia;
   }
 }

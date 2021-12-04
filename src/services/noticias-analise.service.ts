@@ -18,6 +18,7 @@ export class NoticiasAnaliseService {
     try {
       const noticia = await this.processNewsData(body);
       await this.em.persistAndFlush(noticia);
+      return noticia;
     } catch {
       return 'Noticia já existe na base de dados!';
     }
@@ -35,10 +36,11 @@ export class NoticiasAnaliseService {
     return notices;
   }
 
-  async delete(url): Promise<string> {
+  async delete(url): Promise<NoticiasAnalise | string> {
     try {
       const noticia = await this.em.findOne(NoticiasAnalise, { url });
       await this.em.removeAndFlush(noticia);
+      return noticia;
     } catch {
       return 'Noticia não foi encontrada na base de dados!';
     }
@@ -49,20 +51,21 @@ export class NoticiasAnaliseService {
     noticia.url = news.url;
     noticia.texto = news.texto;
     noticia.titulo = news.titulo;
-    for (const t of news.tickers) {
-      let ticker = await this.em.findOne(Ticker, { nome: t });
-      if (!ticker) {
-        const newTicker = {
-          nome: t,
-        };
-        ticker = await this.em.create(Ticker, newTicker);
-        await this.em.persistAndFlush(ticker);
+    if (news.tickers !== undefined) {
+      for (const t of news.tickers) {
+        let ticker = await this.em.findOne(Ticker, { nome: t });
+        if (!ticker) {
+          const newTicker = {
+            nome: t,
+          };
+          ticker = await this.em.create(Ticker, newTicker);
+          await this.em.persistAndFlush(ticker);
+        }
+        noticia.tickers.add(ticker);
       }
-      noticia.tickers.add(ticker);
     }
     noticia.sentimento = news.sentimento;
 
-    this.em.create(NoticiasAnalise, noticia);
     return noticia;
   }
 }

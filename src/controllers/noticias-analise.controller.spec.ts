@@ -83,7 +83,7 @@ describe('NoticiasAnaliseController', () => {
       const newsDelete = await appService.delete('teste.com');
       const company = await empresaService.get('TT', true);
       await empresaService.delete(company.id);
-      expect(newsDelete).toBeNull();
+      if (newsDelete instanceof NoticiasAnalise) expect(newsDelete.url).toContain('teste.com');
     });
   });
 
