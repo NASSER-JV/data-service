@@ -51,6 +51,7 @@ export class NoticiasAnaliseService {
     noticia.url = news.url;
     noticia.texto = news.texto;
     noticia.titulo = news.titulo;
+    noticia.sentimento = news.sentimento;
     if (news.tickers !== undefined) {
       for (const t of news.tickers) {
         let ticker = await this.em.findOne(Ticker, { nome: t });
@@ -64,8 +65,6 @@ export class NoticiasAnaliseService {
         noticia.tickers.add(ticker);
       }
     }
-    noticia.sentimento = news.sentimento;
-
     return noticia;
   }
 }
