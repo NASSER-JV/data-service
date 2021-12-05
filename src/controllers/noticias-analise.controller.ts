@@ -1,4 +1,4 @@
-import { Controller, Delete, Get, HttpException, HttpStatus, Post, Query, Req } from '@nestjs/common';
+import { Controller, Delete, Get, Post, Query, Req } from '@nestjs/common';
 import { Request } from 'express';
 import { NoticiasAnaliseService } from '@/services/noticias-analise.service';
 
@@ -30,11 +30,6 @@ export class NoticiasAnaliseController {
 
   @Delete()
   async deleteNews(@Query('url') url: string) {
-    const deletedNews = await this.noticiasAnaliseService.delete(url);
-    if (deletedNews instanceof String) {
-      return deletedNews;
-    } else {
-      throw new HttpException('Noticia não foi encontrada no banco de dados.', HttpStatus.BAD_REQUEST);
-    }
+    return await this.noticiasAnaliseService.delete(url);
   }
 }
