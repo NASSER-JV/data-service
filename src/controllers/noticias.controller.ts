@@ -1,7 +1,6 @@
-import { Controller, Delete, Get, HttpException, HttpStatus, Patch, Post, Query, Req } from '@nestjs/common';
+import { Controller, Delete, Get, Patch, Post, Query, Req } from '@nestjs/common';
 import { Request } from 'express';
 import { NoticiasService } from '@/services/noticias.service';
-import { Noticias } from '@/data/entities/noticias.entity';
 
 @Controller('/noticias')
 export class NoticiasController {
@@ -20,12 +19,7 @@ export class NoticiasController {
   @Post()
   async createNews(@Req() request: Request) {
     const body = request.body;
-    const noticia = await this.noticiasService.create(body);
-    if (noticia instanceof Noticias) {
-      return noticia;
-    } else {
-      throw new HttpException('Noticia já cadastrada no banco de dados.', HttpStatus.BAD_REQUEST);
-    }
+    return await this.noticiasService.create(body);
   }
 
   @Post('/lote')
@@ -43,11 +37,6 @@ export class NoticiasController {
 
   @Delete()
   async deleteNews(@Query('url') url: string) {
-    const deletedNews = await this.noticiasService.delete(url);
-    if (deletedNews instanceof String) {
-      return deletedNews;
-    } else {
-      throw new HttpException('Noticia não foi encontrada no banco de dados.', HttpStatus.BAD_REQUEST);
-    }
+    return await this.noticiasService.delete(url);
   }
 }

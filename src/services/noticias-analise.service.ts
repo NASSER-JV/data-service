@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { EntityManager, MikroORM } from '@mikro-orm/core';
 import { NoticiasAnalise } from '@/data/entities/noticias-analise.entity';
 import { Ticker } from '@/data/entities/tickers.entity';
@@ -14,13 +14,13 @@ export class NoticiasAnaliseService {
     return this.em.find(NoticiasAnalise, { tickers: codigo });
   }
 
-  async create(body): Promise<NoticiasAnalise | string> {
+  async create(body): Promise<NoticiasAnalise> {
     try {
       const noticia = await this.processNewsData(body);
       await this.em.persistAndFlush(noticia);
       return noticia;
     } catch {
-      return 'Noticia já existe na base de dados!';
+      throw new HttpException('Noticia já cadastrada no banco de dados.', HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -36,13 +36,13 @@ export class NoticiasAnaliseService {
     return notices;
   }
 
-  async delete(url): Promise<NoticiasAnalise | string> {
+  async delete(url): Promise<NoticiasAnalise> {
     try {
       const noticia = await this.em.findOne(NoticiasAnalise, { url });
       await this.em.removeAndFlush(noticia);
       return noticia;
     } catch {
-      return 'Noticia não foi encontrada na base de dados!';
+      throw new HttpException('Noticia não foi encontrada.', HttpStatus.BAD_REQUEST);
     }
   }
 
