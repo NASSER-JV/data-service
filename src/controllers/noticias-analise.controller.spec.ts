@@ -69,7 +69,7 @@ describe('NoticiasAnaliseController', () => {
 
   describe('Procura noticia Teste', () => {
     it('Deve retornar noticia Teste', async () => {
-      const news = await appController.getNews('TT');
+      const news = await appController.getNews(['TT']);
       let name = '';
       news.forEach((S) => {
         if (S.url == 'teste.com') name = S.url;

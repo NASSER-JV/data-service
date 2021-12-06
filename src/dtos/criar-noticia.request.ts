@@ -1,7 +1,8 @@
-export class CriarNoticiaAnaliseRequest {
+export class CriarNoticiaRequest {
   url: string;
   titulo: string;
   texto: string;
+  date: Date;
   sentimento: number;
-  tickers: string[];
+  empresa_id: number;
 }

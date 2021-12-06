@@ -4,6 +4,7 @@ import { NoticiasAnalise } from '@/data/entities/noticias-analise.entity';
 import { Ticker } from '@/data/entities/tickers.entity';
 import { EntityManager } from '@mikro-orm/postgresql';
 import { groupBy } from 'lodash';
+import { CriarNoticiaAnaliseRequest } from '@/dtos/criar-noticia-analise.request';
 
 @Injectable()
 export class NoticiasAnaliseService {

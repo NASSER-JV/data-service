@@ -1,6 +1,6 @@
-import { Controller, Delete, Get, Param, Patch, Post, Query, Req } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
 import { EmpresasService } from '@/services/empresas.service';
-import { Request } from 'express';
+import { CriarEmpresaRequest } from '@/dtos/criar-empresa.request';
 
 @Controller('/empresas')
 export class EmpresasController {
@@ -12,27 +12,22 @@ export class EmpresasController {
   }
 
   @Get('/filtrar')
-  getCompany(@Query() params) {
-    const sigla = params.sigla;
-    const ativo = params.ativo;
+  getCompany(@Query() sigla: string, @Query() ativo: boolean) {
     return this.empresaService.get(sigla, ativo);
   }
 
-  @Post('/criar')
-  createCompany(@Req() request: Request) {
-    const body = request.body;
-    return this.empresaService.create(body);
+  @Post()
+  createCompany(@Body() empresa: CriarEmpresaRequest) {
+    return this.empresaService.create(empresa);
   }
 
   @Patch('/:id')
-  updateCompany(@Req() request: Request) {
-    const body = request.body;
-    const id = request.params.id;
-    return this.empresaService.update(id, body);
+  updateCompany(@Body() empresa: CriarEmpresaRequest, @Param() id: number) {
+    return this.empresaService.update(id, empresa);
   }
 
   @Delete('/deletar/:id')
-  deleteCompany(@Param('id') id: string) {
+  deleteCompany(@Param('id') id: number) {
     return this.empresaService.delete(id);
   }
 }

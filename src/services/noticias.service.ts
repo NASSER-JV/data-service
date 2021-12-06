@@ -1,6 +1,8 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { EntityManager, MikroORM } from '@mikro-orm/core';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { EntityManager, FilterQuery, MikroORM } from '@mikro-orm/core';
 import { Noticias } from '@/data/entities/noticias.entity';
+import { Empresa } from '@/data/entities/empresa.entity';
+import { CriarNoticiaRequest } from '@/dtos/criar-noticia.request';
 
 @Injectable()
 export class NoticiasService {
@@ -9,63 +11,67 @@ export class NoticiasService {
     return this.em.find(Noticias, {});
   }
 
-  async get(url): Promise<Noticias> {
+  async get(url: string): Promise<Noticias> {
     return this.em.findOne(Noticias, { url: url });
   }
 
-  async create(body): Promise<Noticias> {
+  async create(noticia: CriarNoticiaRequest): Promise<CriarNoticiaRequest> {
+    const noticiaPersistida = await this.em.findOne(Noticias, { url: noticia.url });
+
+    if (!noticiaPersistida) {
+      throw new BadRequestException(Noticias, 'Notícia já cadastrada no sistema.');
+    }
+    const noticiaPersistidas = await this.processDataNews(noticia);
+    await this.em.persistAndFlush(noticiaPersistida);
+    return noticiaPersistidas;
+  }
+
+  async createMany(noticias: CriarNoticiaRequest[]): Promise<CriarNoticiaRequest[]> {
+    const noticiasPersistidas: CriarNoticiaRequest[] = [];
+
     try {
-      const noticia = await this.processDataNews(body);
-      await this.em.persistAndFlush(noticia);
-      return noticia;
-    } catch {
-      throw new HttpException('Noticia já cadastrada no sistema.', HttpStatus.BAD_REQUEST);
-    }
+      await Promise.all(
+        noticias.map(async (noticia) => {
+          const noticiaPersistida = await this.processDataNews(noticia);
+          await this.em.persistAndFlush(noticiaPersistida);
+          noticiasPersistidas.push(noticiaPersistida);
+        }),
+      );
+    } catch {}
+    return noticiasPersistidas;
   }
 
-  async createMany(body): Promise<Noticias[]> {
-    const notices = [];
-    for (const b of body) {
-      try {
-        const noticia = await this.processDataNews(b);
-        notices.push(noticia);
-      } catch {}
-    }
-    await this.em.persistAndFlush(notices);
-    return notices;
-  }
-
-  async update(url, body): Promise<string> {
-    const noticia = new Noticias();
-    noticia.url = body.url;
-    noticia.empresa = body.empresa_id;
-    noticia.corpo = body.texto;
-    noticia.titulo = body.titulo;
-    noticia.date = new Date(body.date);
+  async update(url: FilterQuery<Noticias>, noticia: CriarNoticiaRequest): Promise<string> {
+    const noticiaPersistida = new Noticias();
+    noticiaPersistida.url = noticia.url;
+    noticiaPersistida.empresa = this.em.getReference(Empresa, noticia.empresa_id);
+    noticiaPersistida.corpo = noticia.texto;
+    noticiaPersistida.titulo = noticia.titulo;
+    noticiaPersistida.date = new Date(noticia.date);
     await this.em.nativeUpdate(Noticias, url, noticia);
     return `Noticia ${noticia.url} atualizada com sucesso!`;
   }
 
-  async delete(url): Promise<Noticias> {
-    try {
-      const noticia = await this.em.findOne(Noticias, { url });
-      await this.em.removeAndFlush(noticia);
-      return noticia;
-    } catch {
-      throw new HttpException('Noticia não foi encontrada.', HttpStatus.BAD_REQUEST);
+  async delete(url: string): Promise<Noticias> {
+    const noticia = await this.em.findOne(Noticias, { url });
+
+    if (!noticia) {
+      throw new NotFoundException(Noticias, 'Noticia não foi encontrada.');
     }
+    await this.em.removeAndFlush(noticia);
+    return noticia;
   }
 
-  private async processDataNews(body) {
-    const noticia = new Noticias();
-    noticia.url = body.url;
-    noticia.corpo = body.texto;
-    noticia.titulo = body.titulo;
-    noticia.empresa = body.empresa_id;
-    noticia.date = new Date(body.date);
-    noticia.sentimento = body.sentimento;
+  private async processDataNews(noticia: CriarNoticiaRequest) {
+    const noticiaPersistida = new Noticias();
+    noticiaPersistida.url = noticia.url;
+    noticiaPersistida.corpo = noticia.texto;
+    noticiaPersistida.titulo = noticia.titulo;
+    noticiaPersistida.empresa = this.em.getReference(Empresa, noticia.empresa_id);
+    noticiaPersistida.date = new Date(noticia.date);
+    noticiaPersistida.sentimento = noticia.sentimento;
 
-    await this.em.create(Noticias, noticia);
+    this.em.create(Noticias, noticia);
     return noticia;
   }
 }
