@@ -1,5 +1,4 @@
-import { Controller, Delete, Get, Post, Query, Req } from '@nestjs/common';
-import { Request } from 'express';
+import { Body, Controller, Delete, Get, Post, Query } from '@nestjs/common';
 import { NoticiasAnaliseService } from '@/services/noticias-analise.service';
 
 @Controller('/noticiasanalise')
@@ -12,24 +11,22 @@ export class NoticiasAnaliseController {
   }
 
   @Get('/filtrar')
-  async getNews(@Query('ticker') ticker) {
+  async getNews(@Query('ticker') ticker: string[]) {
     return this.noticiasAnaliseService.get(ticker);
   }
 
   @Post()
-  async createNews(@Req() request: Request) {
-    const body = request.body;
-    return await this.noticiasAnaliseService.create(body);
+  async createNews(@Body() payload: CriarNoticiaAnaliseRequest) {
+    return this.noticiasAnaliseService.create(payload);
   }
 
   @Post('/lote')
-  async createManyNews(@Req() request: Request) {
-    const body = request.body;
-    return this.noticiasAnaliseService.createMany(body);
+  async createManyNews(@Body() payload: CriarNoticiaAnaliseRequest[]) {
+    return this.noticiasAnaliseService.createMany(payload);
   }
 
   @Delete()
   async deleteNews(@Query('url') url: string) {
-    return await this.noticiasAnaliseService.delete(url);
+    return this.noticiasAnaliseService.delete(url);
   }
 }

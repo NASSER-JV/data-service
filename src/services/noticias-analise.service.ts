@@ -1,7 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { EntityManager, MikroORM } from '@mikro-orm/core';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { MikroORM } from '@mikro-orm/core';
 import { NoticiasAnalise } from '@/data/entities/noticias-analise.entity';
 import { Ticker } from '@/data/entities/tickers.entity';
+import { EntityManager } from '@mikro-orm/postgresql';
+import { groupBy } from 'lodash';
 
 @Injectable()
 export class NoticiasAnaliseService {
@@ -10,43 +12,70 @@ export class NoticiasAnaliseService {
     return this.em.find(NoticiasAnalise, {});
   }
 
-  async get(codigo): Promise<NoticiasAnalise[]> {
-    return this.em.find(NoticiasAnalise, { tickers: codigo });
+  async get(tickers: string[]): Promise<BuscarNoticiasAnaliseResponse[]> {
+    const resultado = await this.em.execute(
+      `
+          SELECT na.url
+                 na.titulo,
+                 na.texto,
+                 na.sentimento,
+                 t.nome
+          FROM noticias_analise AS na
+                   INNER JOIN noticias_analise_tickers AS nat ON na.url = nat.noticias_analise_url
+                   INNER JOIN tickers AS t ON t.nome = na.ticker_nome
+          WHERE t.nome IN (?)
+    `,
+      tickers,
+    );
+    const noticiasAgrupadas = groupBy(resultado, 'url');
+
+    return Object.entries(noticiasAgrupadas).map(([url, noticias]) => {
+      const noticia = noticias[0];
+
+      return new BuscarNoticiasAnaliseResponse(
+        url,
+        noticia.titulo,
+        noticia.texto,
+        noticia.sentimento,
+        noticias.map((ticker) => ticker.nome),
+      );
+    });
   }
 
-  async create(body): Promise<NoticiasAnalise> {
+  async create(noticia: CriarNoticiaAnaliseRequest): Promise<NoticiasAnalise> {
     try {
-      const noticia = await this.processNewsData(body);
-      await this.em.persistAndFlush(noticia);
-      return noticia;
+      const noticiaPersistida = await this.processNewsData(noticia);
+      await this.em.persistAndFlush(noticiaPersistida);
+      return noticiaPersistida;
     } catch {
       throw new HttpException('Noticia já cadastrada no banco de dados.', HttpStatus.BAD_REQUEST);
     }
   }
 
-  async createMany(body): Promise<NoticiasAnalise[] | string> {
-    const notices = [];
-    for (const b of body) {
+  async createMany(noticias: CriarNoticiaAnaliseRequest[]): Promise<NoticiasAnalise[] | string> {
+    const noticiasPersistidas = [];
+    for (const noticia of noticias) {
       try {
-        const noticia = await this.processNewsData(b);
-        notices.push(noticia);
+        const noticiaPersistida = await this.processNewsData(noticia);
+        noticiasPersistidas.push(noticiaPersistida);
       } catch {}
     }
-    await this.em.persistAndFlush(notices);
-    return notices;
+    await this.em.persistAndFlush(noticiasPersistidas);
+    return noticiasPersistidas;
   }
 
-  async delete(url): Promise<NoticiasAnalise> {
-    try {
-      const noticia = await this.em.findOne(NoticiasAnalise, { url });
-      await this.em.removeAndFlush(noticia);
-      return noticia;
-    } catch {
-      throw new HttpException('Noticia não foi encontrada.', HttpStatus.BAD_REQUEST);
+  async delete(url: string): Promise<NoticiasAnalise> {
+    const noticia = await this.em.findOne(NoticiasAnalise, { url });
+
+    if (!noticia) {
+      throw new NotFoundException(NoticiasAnalise, 'Noticia não foi encontrada.');
     }
+
+    await this.em.removeAndFlush(noticia);
+    return noticia;
   }
 
-  private async processNewsData(news) {
+  private async processNewsData(news: CriarNoticiaAnaliseRequest) {
     const noticia = new NoticiasAnalise();
     noticia.url = news.url;
     noticia.texto = news.texto;
@@ -59,7 +88,7 @@ export class NoticiasAnaliseService {
           const newTicker = {
             nome: t,
           };
-          ticker = await this.em.create(Ticker, newTicker);
+          ticker = this.em.create(Ticker, newTicker);
           await this.em.persistAndFlush(ticker);
         }
         noticia.tickers.add(ticker);
