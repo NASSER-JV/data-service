@@ -1,4 +1,4 @@
-class BuscarNoticiasAnaliseResponse {
+export class BuscarNoticiasAnaliseResponse {
   constructor(
     public url: string,
     public titulo: string,
