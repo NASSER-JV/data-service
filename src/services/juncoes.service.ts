@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { EntityManager, MikroORM } from '@mikro-orm/core';
 import { Juncoes } from '@/data/entities/juncoes.entity';
 import { Empresa } from '@/data/entities/empresa.entity';
@@ -19,7 +19,7 @@ export class JuncoesService {
     if (juncao.juncaoId !== undefined) {
       const juncaoInDatabase = await this.em.findOne(Juncoes, { id: juncao.juncaoId });
       if (juncaoInDatabase !== null) {
-        return `A junção ja foi cadastrada anteriormente!`;
+        throw new BadRequestException(Juncoes, 'Junção já cadastrada no sistema.');
       }
     }
     const juncaoPersistida = await this.em.create(Juncoes, {

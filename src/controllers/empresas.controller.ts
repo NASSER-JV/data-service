@@ -1,6 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
 import { EmpresasService } from '@/services/empresas.service';
 import { CriarEmpresaRequest } from '@/dtos/criar-empresa.request';
+import { BuscarEmpresaQuery } from '@/dtos/buscar-empresa.query';
 
 @Controller('/empresas')
 export class EmpresasController {
@@ -12,8 +13,8 @@ export class EmpresasController {
   }
 
   @Get('/filtrar')
-  getCompany(@Query() sigla: string, @Query() ativo: boolean) {
-    return this.empresaService.get(sigla, ativo);
+  getCompany(@Query() query: BuscarEmpresaQuery) {
+    return this.empresaService.get(query);
   }
 
   @Post()

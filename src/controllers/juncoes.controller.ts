@@ -17,7 +17,7 @@ export class JuncoesController {
     return this.juncoesService.get(id);
   }
 
-  @Post('/criar')
+  @Post()
   createJuncao(@Req() request: Request) {
     const body = request.body;
     return this.juncoesService.create(body);

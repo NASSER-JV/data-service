@@ -3,6 +3,7 @@ import { EntityManager, MikroORM } from '@mikro-orm/core';
 import { Empresa } from '@/data/entities/empresa.entity';
 import { Noticias } from '@/data/entities/noticias.entity';
 import { CriarEmpresaRequest } from '@/dtos/criar-empresa.request';
+import { BuscarEmpresaQuery } from '@/dtos/buscar-empresa.query';
 
 @Injectable()
 export class EmpresasService {
@@ -11,8 +12,8 @@ export class EmpresasService {
     return this.em.find(Empresa, { ativo: true });
   }
 
-  async get(sigla: string, ativo: boolean): Promise<Empresa> {
-    return this.em.findOne(Empresa, { codigo: sigla, ativo: ativo });
+  async get(query: BuscarEmpresaQuery): Promise<Empresa> {
+    return this.em.findOne(Empresa, { codigo: query.sigla, ativo: query.ativo });
   }
 
   async create(empresa: CriarEmpresaRequest): Promise<Empresa | string> {

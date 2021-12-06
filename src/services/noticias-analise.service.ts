@@ -1,10 +1,11 @@
-import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { MikroORM } from '@mikro-orm/core';
 import { NoticiasAnalise } from '@/data/entities/noticias-analise.entity';
 import { Ticker } from '@/data/entities/tickers.entity';
 import { EntityManager } from '@mikro-orm/postgresql';
 import { groupBy } from 'lodash';
 import { CriarNoticiaAnaliseRequest } from '@/dtos/criar-noticia-analise.request';
+import { Noticias } from '@/data/entities/noticias.entity';
 
 @Injectable()
 export class NoticiasAnaliseService {
@@ -44,24 +45,29 @@ export class NoticiasAnaliseService {
   }
 
   async create(noticia: CriarNoticiaAnaliseRequest): Promise<NoticiasAnalise> {
-    try {
-      const noticiaPersistida = await this.processNewsData(noticia);
-      await this.em.persistAndFlush(noticiaPersistida);
-      return noticiaPersistida;
-    } catch {
-      throw new HttpException('Noticia já cadastrada no banco de dados.', HttpStatus.BAD_REQUEST);
+    const noticiaPersistida = await this.em.findOne(NoticiasAnalise, { url: noticia.url });
+
+    if (noticiaPersistida) {
+      throw new BadRequestException(Noticias, 'Notícia já cadastrada no sistema.');
     }
+    const noticiaNova = await this.processNewsData(noticia);
+
+    await this.em.persistAndFlush(noticiaNova);
+    return noticiaPersistida;
   }
 
   async createMany(noticias: CriarNoticiaAnaliseRequest[]): Promise<NoticiasAnalise[] | string> {
-    const noticiasPersistidas = [];
-    for (const noticia of noticias) {
-      try {
-        const noticiaPersistida = await this.processNewsData(noticia);
-        noticiasPersistidas.push(noticiaPersistida);
-      } catch {}
-    }
-    await this.em.persistAndFlush(noticiasPersistidas);
+    const noticiasPersistidas: NoticiasAnalise[] = [];
+
+    try {
+      await Promise.all(
+        noticias.map(async (noticia) => {
+          const noticiaPersistida = await this.processNewsData(noticia);
+          await this.em.persistAndFlush(noticiaPersistida);
+          noticiasPersistidas.push(noticiaPersistida);
+        }),
+      );
+    } catch {}
     return noticiasPersistidas;
   }
 

@@ -1,8 +1,9 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { EntityManager, FilterQuery, MikroORM } from '@mikro-orm/core';
+import { FilterQuery, MikroORM } from '@mikro-orm/core';
 import { Noticias } from '@/data/entities/noticias.entity';
 import { Empresa } from '@/data/entities/empresa.entity';
 import { CriarNoticiaRequest } from '@/dtos/criar-noticia.request';
+import { EntityManager } from '@mikro-orm/postgresql';
 
 @Injectable()
 export class NoticiasService {
@@ -15,19 +16,19 @@ export class NoticiasService {
     return this.em.findOne(Noticias, { url: url });
   }
 
-  async create(noticia: CriarNoticiaRequest): Promise<CriarNoticiaRequest> {
+  async create(noticia: CriarNoticiaRequest): Promise<Noticias> {
     const noticiaPersistida = await this.em.findOne(Noticias, { url: noticia.url });
 
-    if (!noticiaPersistida) {
+    if (noticiaPersistida) {
       throw new BadRequestException(Noticias, 'Notícia já cadastrada no sistema.');
     }
-    const noticiaPersistidas = await this.processDataNews(noticia);
-    await this.em.persistAndFlush(noticiaPersistida);
-    return noticiaPersistidas;
+    const noticiaNova = await this.processDataNews(noticia);
+    await this.em.persistAndFlush(noticiaNova);
+    return noticiaNova;
   }
 
-  async createMany(noticias: CriarNoticiaRequest[]): Promise<CriarNoticiaRequest[]> {
-    const noticiasPersistidas: CriarNoticiaRequest[] = [];
+  async createMany(noticias: CriarNoticiaRequest[]): Promise<Noticias[]> {
+    const noticiasPersistidas: Noticias[] = [];
 
     try {
       await Promise.all(
@@ -72,6 +73,6 @@ export class NoticiasService {
     noticiaPersistida.sentimento = noticia.sentimento;
 
     this.em.create(Noticias, noticia);
-    return noticia;
+    return noticiaPersistida;
   }
 }

@@ -42,11 +42,11 @@ describe('NoticiasController', () => {
       if (empresa instanceof Empresa) {
         const body = {
           url: 'teste.com',
-          empresa_id: `${empresa.id}`,
+          empresa_id: empresa.id,
           texto: 'teste',
           titulo: 'teste',
           sentimento: 1,
-          date: '2021-11-12',
+          date: new Date('2021-11-12'),
         };
         news = await appService.create(body);
       }

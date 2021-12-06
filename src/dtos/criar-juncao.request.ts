@@ -1,6 +1,6 @@
 export class CriarJuncaoRequest {
-  juncaoId: number;
-  dataInicio: Date;
-  dataFim: Date;
+  juncaoId?: number;
+  dataInicio: string;
+  dataFim: string;
   empresa_id: number;
 }

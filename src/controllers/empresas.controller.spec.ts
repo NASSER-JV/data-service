@@ -5,6 +5,8 @@ import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { ConfigModule } from '@nestjs/config';
 import { Connection, IDatabaseDriver, MikroORM } from '@mikro-orm/core';
 import { Empresa } from '@/data/entities/empresa.entity';
+import { CriarEmpresaRequest } from '@/dtos/criar-empresa.request';
+import { BuscarEmpresaQuery } from '@/dtos/buscar-empresa.query';
 
 describe('EmpresaController', () => {
   let appController: EmpresasController;
@@ -24,7 +26,7 @@ describe('EmpresaController', () => {
   });
   describe('Criar empresa teste', () => {
     it('Deve criar uma nova empresa', async () => {
-      const body = {
+      const body: CriarEmpresaRequest = {
         nome: 'Teste',
         codigo: 'TT',
         ativo: true,
@@ -49,16 +51,22 @@ describe('EmpresaController', () => {
 
   describe('Procura empresa Teste', () => {
     it('Deve retornar empresa Teste', async () => {
-      const params = { sigla: 'TT', ativo: true };
-      const company = await appController.getCompany(params);
+      const query: BuscarEmpresaQuery = {
+        sigla: 'TT',
+        ativo: true,
+      };
+      const company = await appController.getCompany(query);
       expect(company.nome).toContain('Teste');
     });
   });
 
   describe('Deletar empresa teste', () => {
     it('Deve deletar uma empresa', async () => {
-      const params = { sigla: 'TT', ativo: true };
-      const company = await appController.getCompany(params);
+      const query: BuscarEmpresaQuery = {
+        sigla: 'TT',
+        ativo: true,
+      };
+      const company = await appController.getCompany(query);
       const companyDelete = await appService.delete(company.id);
       expect(companyDelete).toContain(`Empresa: ${company.nome} removida com sucesso!`);
     });
