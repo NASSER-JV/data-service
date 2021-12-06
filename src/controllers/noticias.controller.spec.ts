@@ -7,6 +7,7 @@ import { NoticiasService } from '@/services/noticias.service';
 import { EmpresasService } from '@/services/empresas.service';
 import { Noticias } from '@/data/entities/noticias.entity';
 import { Empresa } from '@/data/entities/empresa.entity';
+import { BuscarEmpresaQuery } from '@/dtos/buscar-empresa.query';
 
 describe('NoticiasController', () => {
   let appController: NoticiasController;
@@ -29,8 +30,12 @@ describe('NoticiasController', () => {
   describe('Criar noticia teste', () => {
     it('Deve criar uma nova noticia', async () => {
       let news: Noticias | string = '';
+      const query: BuscarEmpresaQuery = {
+        sigla: 'TT',
+        ativo: true,
+      };
 
-      let empresa: Empresa | string = await empresaService.get('TT', true);
+      let empresa: Empresa | string = await empresaService.get(query);
       if (empresa == null) {
         const bodyEmpresa = {
           nome: 'TesteNoticia',
@@ -77,8 +82,12 @@ describe('NoticiasController', () => {
 
   describe('Deletar noticia teste', () => {
     it('Deve deletar uma noticia', async () => {
+      const query: BuscarEmpresaQuery = {
+        sigla: 'TT',
+        ativo: true,
+      };
       const newsDelete = await appService.delete('teste.com');
-      const company = await empresaService.get('TT', true);
+      const company = await empresaService.get(query);
       await empresaService.delete(company.id);
       if (newsDelete instanceof Noticias) expect(newsDelete.url).toContain('teste.com');
     });

@@ -27,7 +27,7 @@ export class JuncoesService {
       dataFim: new Date(juncao.dataFim),
       empresa: juncao.empresa_id,
     });
-    await this.em.persistAndFlush(juncao);
+    await this.em.persistAndFlush(juncaoPersistida);
     return juncaoPersistida;
   }
 

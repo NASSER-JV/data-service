@@ -17,14 +17,14 @@ export class NoticiasAnaliseService {
   async get(tickers: string[]): Promise<BuscarNoticiasAnaliseResponse[]> {
     const resultado = await this.em.execute(
       `
-          SELECT na.url
+          SELECT na.url,
                  na.titulo,
                  na.texto,
                  na.sentimento,
                  t.nome
           FROM noticias_analise AS na
                    INNER JOIN noticias_analise_tickers AS nat ON na.url = nat.noticias_analise_url
-                   INNER JOIN tickers AS t ON t.nome = na.ticker_nome
+                   INNER JOIN ticker AS t ON t.nome = nat.ticker_nome
           WHERE t.nome IN (?)
     `,
       tickers,
