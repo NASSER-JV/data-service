@@ -1,6 +1,7 @@
-import { Controller, Delete, Get, Param, Patch, Post, Query, Req } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, Req } from '@nestjs/common';
 import { Request } from 'express';
 import { JuncoesService } from '@/services/juncoes.service';
+import { CriarJuncaoRequest } from '@/dtos/criar-juncao.request';
 
 @Controller('/juncoes')
 export class JuncoesController {
@@ -12,25 +13,23 @@ export class JuncoesController {
   }
 
   @Get('/filtrar')
-  getJuncao(@Query('id') id) {
+  getJuncao(@Query('id') id: number) {
     return this.juncoesService.get(id);
   }
 
-  @Post('/criar')
+  @Post()
   createJuncao(@Req() request: Request) {
     const body = request.body;
     return this.juncoesService.create(body);
   }
 
   @Patch('/:id')
-  updateJuncao(@Req() request: Request) {
-    const body = request.body;
-    const id = request.params.id;
-    return this.juncoesService.update(id, body);
+  updateJuncao(@Body() juncao: CriarJuncaoRequest, @Param() id: number) {
+    return this.juncoesService.update(id, juncao);
   }
 
   @Delete('/deletar/:id')
-  deleteJuncao(@Param('id') id: string) {
+  deleteJuncao(@Param('id') id: number) {
     return this.juncoesService.delete(id);
   }
 }

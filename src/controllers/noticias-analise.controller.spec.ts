@@ -2,40 +2,38 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { ConfigModule } from '@nestjs/config';
 import { Connection, IDatabaseDriver, MikroORM } from '@mikro-orm/core';
-import { NoticiasController } from '@/controllers/noticias.controller';
-import { NoticiasService } from '@/services/noticias.service';
 import { EmpresasService } from '@/services/empresas.service';
-import { Noticia } from '@/data/entities/noticias.entity';
 import { Empresa } from '@/data/entities/empresa.entity';
+import { NoticiasAnaliseController } from '@/controllers/noticias-analise.controller';
+import { NoticiasAnaliseService } from '@/services/noticias-analise.service';
+import { NoticiaAnalise } from '@/data/entities/noticias-analise.entity';
 import { BuscarEmpresaQuery } from '@/dtos/buscar-empresa.query';
-import { CriarNoticiaRequest } from '@/dtos/criar-noticia.request';
 
-describe('NoticiasController', () => {
-  let appController: NoticiasController;
-  let appService: NoticiasService;
+describe('NoticiasAnaliseController', () => {
+  let appController: NoticiasAnaliseController;
+  let appService: NoticiasAnaliseService;
   let empresaService: EmpresasService;
   let orm: MikroORM<IDatabaseDriver<Connection>>;
 
   beforeAll(async () => {
     const app: TestingModule = await Test.createTestingModule({
       imports: [ConfigModule.forRoot(), MikroOrmModule.forRoot()],
-      controllers: [NoticiasController],
-      providers: [NoticiasService, EmpresasService],
+      controllers: [NoticiasAnaliseController],
+      providers: [NoticiasAnaliseService, EmpresasService],
     }).compile();
 
     orm = app.get<MikroORM>(MikroORM);
-    appController = app.get<NoticiasController>(NoticiasController);
-    appService = app.get<NoticiasService>(NoticiasService);
+    appController = app.get<NoticiasAnaliseController>(NoticiasAnaliseController);
+    appService = app.get<NoticiasAnaliseService>(NoticiasAnaliseService);
     empresaService = app.get<EmpresasService>(EmpresasService);
   });
-  describe('Criar noticia teste', () => {
+  describe('Criar noticia analise teste', () => {
     it('Deve criar uma nova noticia', async () => {
-      let news: Noticia | string = '';
+      let news: NoticiaAnalise | string = '';
       const query: BuscarEmpresaQuery = {
         sigla: 'TT',
         ativo: true,
       };
-
       let empresa: Empresa | string = await empresaService.get(query);
       if (empresa == null) {
         const bodyEmpresa = {
@@ -46,25 +44,23 @@ describe('NoticiasController', () => {
         empresa = await empresaService.create(bodyEmpresa);
       }
       if (empresa instanceof Empresa) {
-        const body: CriarNoticiaRequest = {
+        const body = {
           url: 'teste.com',
-          empresa_id: empresa.id,
           texto: 'teste',
           titulo: 'teste',
-          analise: null,
           sentimento: 1,
-          date: new Date('2021-11-12'),
+          tickers: ['TT'],
         };
         news = await appService.create(body);
       }
 
-      if (news instanceof Noticia) {
+      if (news instanceof NoticiaAnalise) {
         expect(news.url).toContain('teste.com');
       }
     });
   });
 
-  describe('Listar noticias', () => {
+  describe('Listar noticias analise', () => {
     it('Deve retornar lista de noticias e verifica se possui Teste', async () => {
       const news = await appController.getAll();
       let name = '';
@@ -77,12 +73,16 @@ describe('NoticiasController', () => {
 
   describe('Procura noticia Teste', () => {
     it('Deve retornar noticia Teste', async () => {
-      const news = await appController.getNews('teste.com');
-      expect(news.url).toContain('teste.com');
+      const news = await appController.getNews(['TT']);
+      let name = '';
+      news.forEach((S) => {
+        if (S.url == 'teste.com') name = S.url;
+      });
+      expect(name).toContain('teste.com');
     });
   });
 
-  describe('Deletar noticia teste', () => {
+  describe('Deletar noticia analise teste', () => {
     it('Deve deletar uma noticia', async () => {
       const query: BuscarEmpresaQuery = {
         sigla: 'TT',
@@ -91,7 +91,7 @@ describe('NoticiasController', () => {
       const newsDelete = await appService.delete('teste.com');
       const company = await empresaService.get(query);
       await empresaService.delete(company.id);
-      if (newsDelete instanceof Noticia) expect(newsDelete.url).toContain('teste.com');
+      if (newsDelete instanceof NoticiaAnalise) expect(newsDelete.url).toContain('teste.com');
     });
   });
 

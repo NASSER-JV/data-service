@@ -1,9 +1,10 @@
-import { Entity, Enum, IdentifiedReference, ManyToOne, PrimaryKey, Property } from '@mikro-orm/core';
-import { Sentimento } from '@/data/enums/sentimental.enum';
+import { Entity, ManyToOne, PrimaryKey, Property } from '@mikro-orm/core';
 import { Empresa } from '@/data/entities/empresa.entity';
 
-@Entity()
-export class Noticias {
+@Entity({
+  tableName: 'noticias'
+})
+export class Noticia {
   @PrimaryKey({ unique: true, type: 'text' })
   url!: string;
 
@@ -16,9 +17,12 @@ export class Noticias {
   @Property()
   date: Date;
 
-  @Enum({ nullable: true })
-  analise: Sentimento.Neutro;
+  @Property()
+  sentimento!: number;
+
+  @Property({ nullable: true, comment: 'Analise do ML' })
+  analise: number;
 
   @ManyToOne(() => Empresa)
-  empresa: IdentifiedReference<Empresa>;
+  empresa: Empresa;
 }

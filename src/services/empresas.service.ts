@@ -1,6 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { EntityManager, MikroORM } from '@mikro-orm/core';
 import { Empresa } from '@/data/entities/empresa.entity';
+import { Noticia } from '@/data/entities/noticias.entity';
+import { CriarEmpresaRequest } from '@/dtos/criar-empresa.request';
+import { BuscarEmpresaQuery } from '@/dtos/buscar-empresa.query';
 
 @Injectable()
 export class EmpresasService {
@@ -9,33 +12,40 @@ export class EmpresasService {
     return this.em.find(Empresa, { ativo: true });
   }
 
-  async get(sigla, ativo): Promise<Empresa> {
-    return this.em.findOne(Empresa, { codigo: sigla, ativo: ativo });
+  async get(query: BuscarEmpresaQuery): Promise<Empresa> {
+    return this.em.findOne(Empresa, { codigo: query.sigla, ativo: query.ativo });
   }
 
-  async create(body): Promise<Empresa | string> {
-    const empresaInDatabase = await this.em.findOne(Empresa, { codigo: body.codigo, ativo: true });
-    if (empresaInDatabase !== null) {
-      return `A empresa ${empresaInDatabase.nome} ja foi cadastrada anteriormente!`;
+  async create(empresa: CriarEmpresaRequest): Promise<Empresa | string> {
+    const empresaInDatabase = await this.em.findOne(Empresa, { codigo: empresa.codigo, ativo: true });
+    if (empresaInDatabase) {
+      throw new BadRequestException(Empresa, 'Empresa já cadastrada no sistema.');
     }
-    const empresa = this.em.create(Empresa, { nome: body.nome, codigo: body.codigo, ativo: body.ativo });
-    await this.em.persistAndFlush(empresa);
-    return empresa;
+    const empresaPersistida = this.em.create(Empresa, {
+      nome: empresa.nome,
+      codigo: empresa.codigo,
+      ativo: empresa.ativo,
+    });
+    await this.em.persistAndFlush(empresaPersistida);
+    return empresaPersistida;
   }
 
-  async update(id, body): Promise<string> {
+  async update(id: number, empresa: CriarEmpresaRequest): Promise<string> {
     const updateEmpresa: Empresa = {
       id,
-      nome: body.nome,
-      codigo: body.codigo,
-      ativo: body.ativo,
+      nome: empresa.nome,
+      codigo: empresa.codigo,
+      ativo: empresa.ativo,
     };
     await this.em.nativeUpdate(Empresa, id, updateEmpresa);
     return `${updateEmpresa.nome} atualizada com sucesso!`;
   }
 
-  async delete(id): Promise<string> {
+  async delete(id: number): Promise<string> {
     const empresa = await this.em.findOne(Empresa, id);
+    if (!empresa) {
+      throw new NotFoundException(Noticia, 'Noticia não foi encontrada.');
+    }
     await this.em.removeAndFlush(empresa);
     return `Empresa: ${empresa.nome} removida com sucesso!`;
   }

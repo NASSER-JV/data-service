@@ -6,7 +6,9 @@ import { Connection, IDatabaseDriver, MikroORM } from '@mikro-orm/core';
 import { Empresa } from '@/data/entities/empresa.entity';
 import { JuncoesController } from '@/controllers/juncoes.controller';
 import { JuncoesService } from '@/services/juncoes.service';
-import { Juncoes } from '@/data/entities/juncoes.entity';
+import { Juncao } from '@/data/entities/juncoes.entity';
+import { BuscarEmpresaQuery } from '@/dtos/buscar-empresa.query';
+import { CriarJuncaoRequest } from '@/dtos/criar-juncao.request';
 
 describe('JuncaoController', () => {
   let appController: JuncoesController;
@@ -28,8 +30,12 @@ describe('JuncaoController', () => {
   });
   describe('Criar juncao teste', () => {
     it('Deve criar uma nova juncao', async () => {
-      let empresa: Empresa | string = await empresaService.get('TT', true);
-      let juncao: Juncoes | string;
+      const query: BuscarEmpresaQuery = {
+        sigla: 'TT',
+        ativo: true,
+      };
+      let empresa: Empresa | string = await empresaService.get(query);
+      let juncao: Juncao | string;
       if (empresa == null) {
         const bodyEmpresa = {
           nome: 'TesteJuncao',
@@ -39,14 +45,14 @@ describe('JuncaoController', () => {
         empresa = await empresaService.create(bodyEmpresa);
       }
       if (empresa instanceof Empresa) {
-        const body = {
+        const body: CriarJuncaoRequest = {
           dataInicio: '2021-11-12',
           dataFim: '2021-12-03',
-          empresa_id: `${empresa.id}`,
+          empresa_id: empresa.id,
         };
         juncao = await appService.create(body);
       }
-      if (juncao instanceof Juncoes && empresa instanceof Empresa) {
+      if (juncao instanceof Juncao && empresa instanceof Empresa) {
         const empresaIdJuncao = juncao.empresa.id.toString();
         const empresaId = empresa.id.toString();
         expect(empresaIdJuncao).toContain(empresaId);
@@ -56,7 +62,11 @@ describe('JuncaoController', () => {
 
   describe('Listar juncoes', () => {
     it('Deve retornar lista de juncoes e verifica se possui Teste', async () => {
-      const empresa = await empresaService.get('TT', true);
+      const query: BuscarEmpresaQuery = {
+        sigla: 'TT',
+        ativo: true,
+      };
+      const empresa = await empresaService.get(query);
       const juncoes = await appController.getAll();
       let idEmpresa = 0;
       juncoes.forEach((j) => {
@@ -71,7 +81,11 @@ describe('JuncaoController', () => {
   describe('Procura juncao Teste', () => {
     it('Deve retornar juncao Teste', async () => {
       const juncoes = await appController.getAll();
-      const empresa = await empresaService.get('TT', true);
+      const query: BuscarEmpresaQuery = {
+        sigla: 'TT',
+        ativo: true,
+      };
+      const empresa = await empresaService.get(query);
       let idEmpresa = 0;
       juncoes.forEach((j) => {
         if (j.empresa.id == empresa.id) {
@@ -85,7 +99,11 @@ describe('JuncaoController', () => {
   describe('Deletar juncao teste', () => {
     it('Deve deletar uma juncao', async () => {
       const juncoes = await appController.getAll();
-      const empresa = await empresaService.get('TT', true);
+      const query: BuscarEmpresaQuery = {
+        sigla: 'TT',
+        ativo: true,
+      };
+      const empresa = await empresaService.get(query);
       let idJuncao = 0;
       juncoes.forEach((j) => {
         if (j.empresa.id == empresa.id) {

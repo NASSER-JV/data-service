@@ -1,6 +1,9 @@
-import { Controller, Delete, Get, Param, Patch, Post, Query, Req } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, Req } from '@nestjs/common';
 import { Request } from 'express';
 import { NoticiasService } from '@/services/noticias.service';
+import { FilterQuery } from '@mikro-orm/core';
+import { Noticia } from '@/data/entities/noticias.entity';
+import { CriarNoticiaRequest } from '@/dtos/criar-noticia.request';
 
 @Controller('/noticias')
 export class NoticiasController {
@@ -12,31 +15,28 @@ export class NoticiasController {
   }
 
   @Get('/filtrar')
-  getNews(@Query('url') url) {
+  getNews(@Query('url') url: string) {
     return this.noticiasService.get(url);
   }
 
-  @Post('/criar')
-  createNews(@Req() request: Request) {
+  @Post()
+  async createNews(@Req() request: Request) {
     const body = request.body;
     return this.noticiasService.create(body);
   }
 
-  @Post('/importar')
-  createManyNews(@Req() request: Request) {
-    const body = request.body;
-    return this.noticiasService.createMany(body);
+  @Post('/lote')
+  async createManyNews(@Body() payload: CriarNoticiaRequest[]) {
+    return this.noticiasService.createMany(payload);
   }
 
-  @Patch('/:id')
-  updateNews(@Req() request: Request) {
-    const body = request.body;
-    const url = request.params.url;
-    return this.noticiasService.update(url, body);
+  @Patch('/:url')
+  async updateNews(@Body() payload: CriarNoticiaRequest, @Param() url: FilterQuery<Noticia>) {
+    return this.noticiasService.update(url, payload);
   }
 
-  @Delete('/deletar/:url')
-  deleteCompany(@Param('url') url: string) {
+  @Delete()
+  async deleteNews(@Query('url') url: string) {
     return this.noticiasService.delete(url);
   }
 }
