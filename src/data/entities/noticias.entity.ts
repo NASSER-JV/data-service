@@ -18,6 +18,9 @@ export class Noticias {
   @Property()
   sentimento!: number;
 
+  @Property({ nullable: true, comment: 'Analise do ML' })
+  analise: number;
+
   @ManyToOne(() => Empresa)
   empresa: Empresa;
 }

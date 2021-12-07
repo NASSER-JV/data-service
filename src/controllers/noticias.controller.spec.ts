@@ -8,6 +8,7 @@ import { EmpresasService } from '@/services/empresas.service';
 import { Noticias } from '@/data/entities/noticias.entity';
 import { Empresa } from '@/data/entities/empresa.entity';
 import { BuscarEmpresaQuery } from '@/dtos/buscar-empresa.query';
+import { CriarNoticiaRequest } from '@/dtos/criar-noticia.request';
 
 describe('NoticiasController', () => {
   let appController: NoticiasController;
@@ -45,11 +46,12 @@ describe('NoticiasController', () => {
         empresa = await empresaService.create(bodyEmpresa);
       }
       if (empresa instanceof Empresa) {
-        const body = {
+        const body: CriarNoticiaRequest = {
           url: 'teste.com',
           empresa_id: empresa.id,
           texto: 'teste',
           titulo: 'teste',
+          analise: null,
           sentimento: 1,
           date: new Date('2021-11-12'),
         };

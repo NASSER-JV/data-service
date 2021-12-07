@@ -45,11 +45,12 @@ export class NoticiasService {
   async update(url: FilterQuery<Noticias>, noticia: CriarNoticiaRequest): Promise<string> {
     const noticiaPersistida = new Noticias();
     noticiaPersistida.url = noticia.url;
-    noticiaPersistida.empresa = this.em.getReference(Empresa, noticia.empresa_id);
+    noticiaPersistida.empresa = await this.em.getReference(Empresa, noticia.empresa_id);
     noticiaPersistida.corpo = noticia.texto;
     noticiaPersistida.titulo = noticia.titulo;
+    if (noticia.analise !== undefined) noticiaPersistida.analise = noticia.analise;
     noticiaPersistida.date = new Date(noticia.date);
-    await this.em.nativeUpdate(Noticias, url, noticia);
+    await this.em.nativeUpdate(Noticias, url, noticiaPersistida);
     return `Noticia ${noticia.url} atualizada com sucesso!`;
   }
 
@@ -69,6 +70,7 @@ export class NoticiasService {
     noticiaPersistida.corpo = noticia.texto;
     noticiaPersistida.titulo = noticia.titulo;
     noticiaPersistida.empresa = this.em.getReference(Empresa, noticia.empresa_id);
+    if (noticia.analise !== undefined) noticiaPersistida.analise = noticia.analise;
     noticiaPersistida.date = new Date(noticia.date);
     noticiaPersistida.sentimento = noticia.sentimento;
 

@@ -4,5 +4,6 @@ export class CriarNoticiaRequest {
   texto: string;
   date: Date;
   sentimento: number;
+  analise: number;
   empresa_id: number;
 }
