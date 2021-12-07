@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { EntityManager, MikroORM } from '@mikro-orm/core';
 import { Empresa } from '@/data/entities/empresa.entity';
-import { Noticias } from '@/data/entities/noticias.entity';
+import { Noticia } from '@/data/entities/noticias.entity';
 import { CriarEmpresaRequest } from '@/dtos/criar-empresa.request';
 import { BuscarEmpresaQuery } from '@/dtos/buscar-empresa.query';
 
@@ -44,7 +44,7 @@ export class EmpresasService {
   async delete(id: number): Promise<string> {
     const empresa = await this.em.findOne(Empresa, id);
     if (!empresa) {
-      throw new NotFoundException(Noticias, 'Noticia não foi encontrada.');
+      throw new NotFoundException(Noticia, 'Noticia não foi encontrada.');
     }
     await this.em.removeAndFlush(empresa);
     return `Empresa: ${empresa.nome} removida com sucesso!`;

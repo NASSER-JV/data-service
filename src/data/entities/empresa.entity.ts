@@ -1,6 +1,8 @@
 import { Entity, PrimaryKey, Property } from '@mikro-orm/core';
 
-@Entity()
+@Entity({
+  tableName: 'empresas'
+})
 export class Empresa {
   @PrimaryKey({ unique: true })
   id!: number;

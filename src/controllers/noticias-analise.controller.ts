@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get, Post, Query } from '@nestjs/common';
 import { NoticiasAnaliseService } from '@/services/noticias-analise.service';
 import { CriarNoticiaAnaliseRequest } from '@/dtos/criar-noticia-analise.request';
 
-@Controller('/noticiasanalise')
+@Controller('/noticias-analise')
 export class NoticiasAnaliseController {
   constructor(private readonly noticiasAnaliseService: NoticiasAnaliseService) {}
 

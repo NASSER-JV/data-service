@@ -1,18 +1,18 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { MikroORM } from '@mikro-orm/core';
-import { NoticiasAnalise } from '@/data/entities/noticias-analise.entity';
+import { NoticiaAnalise } from '@/data/entities/noticias-analise.entity';
 import { Ticker } from '@/data/entities/tickers.entity';
 import { EntityManager } from '@mikro-orm/postgresql';
 import { groupBy } from 'lodash';
 import { CriarNoticiaAnaliseRequest } from '@/dtos/criar-noticia-analise.request';
-import { Noticias } from '@/data/entities/noticias.entity';
+import { Noticia } from '@/data/entities/noticias.entity';
 import { BuscarNoticiasAnaliseResponse } from '@/dtos/buscar-noticias-analise.response';
 
 @Injectable()
 export class NoticiasAnaliseService {
   constructor(private readonly orm: MikroORM, private readonly em: EntityManager) {}
-  async list(): Promise<NoticiasAnalise[]> {
-    return this.em.find(NoticiasAnalise, {});
+  async list(): Promise<NoticiaAnalise[]> {
+    return this.em.find(NoticiaAnalise, {});
   }
 
   async get(tickers: string[]): Promise<BuscarNoticiasAnaliseResponse[]> {
@@ -45,11 +45,11 @@ export class NoticiasAnaliseService {
     });
   }
 
-  async create(noticia: CriarNoticiaAnaliseRequest): Promise<NoticiasAnalise> {
-    const noticiaPersistida = await this.em.findOne(NoticiasAnalise, { url: noticia.url });
+  async create(noticia: CriarNoticiaAnaliseRequest): Promise<NoticiaAnalise> {
+    const noticiaPersistida = await this.em.findOne(NoticiaAnalise, { url: noticia.url });
 
     if (noticiaPersistida) {
-      throw new BadRequestException(Noticias, 'Notícia já cadastrada no sistema.');
+      throw new BadRequestException(Noticia, 'Notícia já cadastrada no sistema.');
     }
     const noticiaNova = await this.processNewsData(noticia);
 
@@ -57,8 +57,8 @@ export class NoticiasAnaliseService {
     return noticiaPersistida;
   }
 
-  async createMany(noticias: CriarNoticiaAnaliseRequest[]): Promise<NoticiasAnalise[] | string> {
-    const noticiasPersistidas: NoticiasAnalise[] = [];
+  async createMany(noticias: CriarNoticiaAnaliseRequest[]): Promise<NoticiaAnalise[] | string> {
+    const noticiasPersistidas: NoticiaAnalise[] = [];
 
     try {
       await Promise.all(
@@ -72,11 +72,11 @@ export class NoticiasAnaliseService {
     return noticiasPersistidas;
   }
 
-  async delete(url: string): Promise<NoticiasAnalise> {
-    const noticia = await this.em.findOne(NoticiasAnalise, { url });
+  async delete(url: string): Promise<NoticiaAnalise> {
+    const noticia = await this.em.findOne(NoticiaAnalise, { url });
 
     if (!noticia) {
-      throw new NotFoundException(NoticiasAnalise, 'Noticia não foi encontrada.');
+      throw new NotFoundException(NoticiaAnalise, 'Noticia não foi encontrada.');
     }
 
     await this.em.removeAndFlush(noticia);
@@ -84,7 +84,7 @@ export class NoticiasAnaliseService {
   }
 
   private async processNewsData(news: CriarNoticiaAnaliseRequest) {
-    const noticia = new NoticiasAnalise();
+    const noticia = new NoticiaAnalise();
     noticia.url = news.url;
     noticia.texto = news.texto;
     noticia.titulo = news.titulo;

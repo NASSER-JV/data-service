@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get, Param, Patch, Post, Query, Req } from '@
 import { Request } from 'express';
 import { NoticiasService } from '@/services/noticias.service';
 import { FilterQuery } from '@mikro-orm/core';
-import { Noticias } from '@/data/entities/noticias.entity';
+import { Noticia } from '@/data/entities/noticias.entity';
 import { CriarNoticiaRequest } from '@/dtos/criar-noticia.request';
 
 @Controller('/noticias')
@@ -22,7 +22,7 @@ export class NoticiasController {
   @Post()
   async createNews(@Req() request: Request) {
     const body = request.body;
-    return await this.noticiasService.create(body);
+    return this.noticiasService.create(body);
   }
 
   @Post('/lote')
@@ -31,12 +31,12 @@ export class NoticiasController {
   }
 
   @Patch('/:url')
-  async updateNews(@Body() payload: CriarNoticiaRequest, @Param() url: FilterQuery<Noticias>) {
+  async updateNews(@Body() payload: CriarNoticiaRequest, @Param() url: FilterQuery<Noticia>) {
     return this.noticiasService.update(url, payload);
   }
 
   @Delete()
   async deleteNews(@Query('url') url: string) {
-    return await this.noticiasService.delete(url);
+    return this.noticiasService.delete(url);
   }
 }

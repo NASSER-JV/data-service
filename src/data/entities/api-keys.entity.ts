@@ -1,7 +1,9 @@
 import { Entity, PrimaryKey, Property } from '@mikro-orm/core';
 
-@Entity()
-export class ApiKeys {
+@Entity({
+  tableName: 'api-keys'
+})
+export class ApiKey {
   @PrimaryKey({ unique: true })
   id!: number;
 

@@ -1,8 +1,10 @@
 import { Collection, Entity, ManyToMany, PrimaryKey, Property } from '@mikro-orm/core';
 import { Ticker } from '@/data/entities/tickers.entity';
 
-@Entity()
-export class NoticiasAnalise {
+@Entity({
+  tableName: 'noticias_analise'
+})
+export class NoticiaAnalise {
   @PrimaryKey({ unique: true, type: 'text' })
   url!: string;
 

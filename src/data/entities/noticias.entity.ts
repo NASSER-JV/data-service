@@ -1,8 +1,10 @@
 import { Entity, ManyToOne, PrimaryKey, Property } from '@mikro-orm/core';
 import { Empresa } from '@/data/entities/empresa.entity';
 
-@Entity()
-export class Noticias {
+@Entity({
+  tableName: 'noticias'
+})
+export class Noticia {
   @PrimaryKey({ unique: true, type: 'text' })
   url!: string;
 

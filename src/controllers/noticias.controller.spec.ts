@@ -5,7 +5,7 @@ import { Connection, IDatabaseDriver, MikroORM } from '@mikro-orm/core';
 import { NoticiasController } from '@/controllers/noticias.controller';
 import { NoticiasService } from '@/services/noticias.service';
 import { EmpresasService } from '@/services/empresas.service';
-import { Noticias } from '@/data/entities/noticias.entity';
+import { Noticia } from '@/data/entities/noticias.entity';
 import { Empresa } from '@/data/entities/empresa.entity';
 import { BuscarEmpresaQuery } from '@/dtos/buscar-empresa.query';
 import { CriarNoticiaRequest } from '@/dtos/criar-noticia.request';
@@ -30,7 +30,7 @@ describe('NoticiasController', () => {
   });
   describe('Criar noticia teste', () => {
     it('Deve criar uma nova noticia', async () => {
-      let news: Noticias | string = '';
+      let news: Noticia | string = '';
       const query: BuscarEmpresaQuery = {
         sigla: 'TT',
         ativo: true,
@@ -58,7 +58,7 @@ describe('NoticiasController', () => {
         news = await appService.create(body);
       }
 
-      if (news instanceof Noticias) {
+      if (news instanceof Noticia) {
         expect(news.url).toContain('teste.com');
       }
     });
@@ -91,7 +91,7 @@ describe('NoticiasController', () => {
       const newsDelete = await appService.delete('teste.com');
       const company = await empresaService.get(query);
       await empresaService.delete(company.id);
-      if (newsDelete instanceof Noticias) expect(newsDelete.url).toContain('teste.com');
+      if (newsDelete instanceof Noticia) expect(newsDelete.url).toContain('teste.com');
     });
   });
 

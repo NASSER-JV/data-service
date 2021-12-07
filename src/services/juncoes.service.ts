@@ -1,28 +1,28 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { EntityManager, MikroORM } from '@mikro-orm/core';
-import { Juncoes } from '@/data/entities/juncoes.entity';
+import { Juncao } from '@/data/entities/juncoes.entity';
 import { Empresa } from '@/data/entities/empresa.entity';
 import { CriarJuncaoRequest } from '@/dtos/criar-juncao.request';
 
 @Injectable()
 export class JuncoesService {
   constructor(private readonly orm: MikroORM, private readonly em: EntityManager) {}
-  async list(): Promise<Juncoes[]> {
-    return this.em.find(Juncoes, {});
+  async list(): Promise<Juncao[]> {
+    return this.em.find(Juncao, {});
   }
 
-  async get(id: number): Promise<Juncoes> {
-    return this.em.findOne(Juncoes, { id: id });
+  async get(id: number): Promise<Juncao> {
+    return this.em.findOne(Juncao, { id: id });
   }
 
-  async create(juncao: CriarJuncaoRequest): Promise<Juncoes | string> {
+  async create(juncao: CriarJuncaoRequest): Promise<Juncao | string> {
     if (juncao.juncaoId !== undefined) {
-      const juncaoInDatabase = await this.em.findOne(Juncoes, { id: juncao.juncaoId });
+      const juncaoInDatabase = await this.em.findOne(Juncao, { id: juncao.juncaoId });
       if (juncaoInDatabase !== null) {
-        throw new BadRequestException(Juncoes, 'Junção já cadastrada no sistema.');
+        throw new BadRequestException(Juncao, 'Junção já cadastrada no sistema.');
       }
     }
-    const juncaoPersistida = await this.em.create(Juncoes, {
+    const juncaoPersistida = this.em.create(Juncao, {
       dataInicio: new Date(juncao.dataInicio),
       dataFim: new Date(juncao.dataFim),
       empresa: juncao.empresa_id,
@@ -32,18 +32,18 @@ export class JuncoesService {
   }
 
   async update(id: number, juncao: CriarJuncaoRequest): Promise<string> {
-    const updateJuncoes: Juncoes = {
+    const updateJuncoes: Juncao = {
       id,
       dataFim: new Date(juncao.dataFim),
       dataInicio: new Date(juncao.dataInicio),
       empresa: this.em.getReference(Empresa, juncao.empresa_id),
     };
-    await this.em.nativeUpdate(Juncoes, id, updateJuncoes);
+    await this.em.nativeUpdate(Juncao, id, updateJuncoes);
     return `Junção ${updateJuncoes.id} atualizada com sucesso!`;
   }
 
   async delete(id: number): Promise<string> {
-    const juncao = await this.em.findOne(Juncoes, { id });
+    const juncao = await this.em.findOne(Juncao, { id });
     if (juncao === null) return 'Junção não encontrada.';
     await this.em.removeAndFlush(juncao);
     return `Junção foi removida com sucesso!`;

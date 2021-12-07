@@ -6,7 +6,7 @@ import { Connection, IDatabaseDriver, MikroORM } from '@mikro-orm/core';
 import { Empresa } from '@/data/entities/empresa.entity';
 import { JuncoesController } from '@/controllers/juncoes.controller';
 import { JuncoesService } from '@/services/juncoes.service';
-import { Juncoes } from '@/data/entities/juncoes.entity';
+import { Juncao } from '@/data/entities/juncoes.entity';
 import { BuscarEmpresaQuery } from '@/dtos/buscar-empresa.query';
 import { CriarJuncaoRequest } from '@/dtos/criar-juncao.request';
 
@@ -35,7 +35,7 @@ describe('JuncaoController', () => {
         ativo: true,
       };
       let empresa: Empresa | string = await empresaService.get(query);
-      let juncao: Juncoes | string;
+      let juncao: Juncao | string;
       if (empresa == null) {
         const bodyEmpresa = {
           nome: 'TesteJuncao',
@@ -52,7 +52,7 @@ describe('JuncaoController', () => {
         };
         juncao = await appService.create(body);
       }
-      if (juncao instanceof Juncoes && empresa instanceof Empresa) {
+      if (juncao instanceof Juncao && empresa instanceof Empresa) {
         const empresaIdJuncao = juncao.empresa.id.toString();
         const empresaId = empresa.id.toString();
         expect(empresaIdJuncao).toContain(empresaId);
